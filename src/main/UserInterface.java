@@ -38,7 +38,7 @@ public class UserInterface extends JFrame {
 
 	public static void main(String[] args) {
         new UserInterface();
-        SocketCapteur.runSocket();
+        SocketCapteur.startServer(8952);
 	}
 	
 	public JScrollPane fenetreCapteurs() {
