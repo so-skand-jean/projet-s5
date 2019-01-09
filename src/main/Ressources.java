@@ -1,5 +1,5 @@
 package main;
 
 public enum Ressources {
-  EAU, ELECTRICITE, AIRCOMPRIME, TEMPERATURE
+    EAU, ELECTRICITE, AIRCOMPRIME, TEMPERATURE
 }

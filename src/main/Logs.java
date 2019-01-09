@@ -1,4 +1,4 @@
 package main;
 
-public Logs{
+public class Logs{
 }
