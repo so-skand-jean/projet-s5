@@ -1,3 +1,5 @@
+package main;
+
 public class Capteur{
 	private String nom;
 	private Ressources type; /* enumerer a rajouter */
