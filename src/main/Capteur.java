@@ -12,7 +12,7 @@ public class Capteur {
     private boolean estConnecte;
 
     public Capteur(Ressources type, String batiment, int etage, String lieu) {
-        this.nom = "Capteur + batiment + lieu";
+        this.nom = "" + Capteur + batiment + lieu;
         this.type = type;
         this.batiment = batiment;
         this.etage = etage;
@@ -38,4 +38,16 @@ public class Capteur {
             break;
         }
     }
+    
+    public String getNom() {
+		return nom;
+	}
+	
+	public getType() {
+		return type;
+	}
+	
+	public getBatiment() {
+		return batiment;
+	}
 }
