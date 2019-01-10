@@ -19,9 +19,6 @@ import javax.swing.JTable;
 public class UserInterface extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
-    static String[] info = { "capteur1", "capteur2", "capteur3" };
-	Capteur cap1 = new Capteur(Ressources.EAU, "U4", 2, "couloir");
-	Capteur cap2 = new Capteur(Ressources.AIRCOMPRIME, "U3", 2, "devant202");
 	TreeMap<String,Capteur> mapCapteurs;
 	
 	//Pannel
@@ -71,7 +68,7 @@ public class UserInterface extends JFrame {
 		filtrage.add(lblCapteurs);
 		
 		JLabel nbCapteurs = new JLabel("");
-		nbCapteurs.setText(String.valueOf(info.length));
+		nbCapteurs.setText(String.valueOf(mapCapteurs.size()));
 		filtrage.add(nbCapteurs, BorderLayout.WEST);
 		
 		JPanel info_et_filtrage = new JPanel();
