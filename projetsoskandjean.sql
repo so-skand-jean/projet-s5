@@ -39,7 +39,7 @@ CREATE TABLE capteur (
   cpt_seuil_min int(11) NOT NULL,
   cpt_seuil_max int(11) NOT NULL,
   cpt_surnom varchar(200) NOT NULL,
-  cpt_date_depassement timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  cpt_date_depassement timestamp NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 -- --------------------------------------------------------
