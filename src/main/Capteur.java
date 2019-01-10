@@ -11,8 +11,8 @@ public class Capteur{
     private double valeur;
     private boolean estConnecte;
 
-    public Capteur(Ressources type, String batiment, int etage, String lieu) {
-        this.nom = "capteur" + batiment + lieu;
+    public Capteur(String nom) {
+        this.nom = nom;
         this.estConnecte = false;
 
         switch (type) {
