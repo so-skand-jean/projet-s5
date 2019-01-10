@@ -23,8 +23,7 @@ public class UserInterface extends JFrame {
 		
 		ic.add(fenetreCapteurs());
 		
-		
-		
+	
 		
 	    //Définit un titre pour notre fenêtre
 	    ic.setTitle("Gestion de capteurs");
@@ -78,7 +77,7 @@ public class UserInterface extends JFrame {
 		info_et_filtrage.add(cbGaz);
 		// Fin filtrage
 		
-		return fenetreCapteurs();
+		return fenetreCapteurs;
 	}
 	
 }

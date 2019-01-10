@@ -49,11 +49,14 @@ class LireMsg implements Runnable {
     public void run() {
         BufferedReader in;
         String[] data = { "" };
+        
+        // connexion()
         while (!data[0].equals("Deconnexion")) {
             try {
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 data = in.readLine().split(" ");
                 System.out.println(Arrays.toString(data));
+                // donnees()
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -64,6 +67,7 @@ class LireMsg implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        // deconnexion();
     }
 }
 
