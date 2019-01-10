@@ -13,10 +13,6 @@ public class Capteur{
 
     public Capteur(Ressources type, String batiment, int etage, String lieu) {
         this.nom = "capteur" + batiment + lieu;
-        this.type = type;
-        this.batiment = batiment;
-        this.etage = etage;
-        this.lieu = lieu;
         this.estConnecte = false;
 
         switch (type) {
@@ -65,10 +61,34 @@ public class Capteur{
 	
 	/* retourne la veleur que si elle existe, soit que si le capteur est connecté */
 	public double getValeur() {
-		if(!estConnecte) return (Double) null;
+		if(!estConnecte) return 0;
 		else return valeur;
 	}
 	
+	public String getLieu() {
+		return lieu;
+	}
+	
+	public boolean getEstConnecte() {
+		return estConnecte;
+	}
+	
+	public void setBatiment(String batiment) {
+		this.batiment = batiment;
+	}
+	
+	public void setType(Ressources type) {
+		this.type = type;
+	}
+
+	public void setEtage(int etage) {
+		this.etage = etage;
+	}
+
+	public void setLieu(String lieu) {
+		this.lieu = lieu;
+	}
+
 	public void setSeuilMin(double seuilMin) {
 		this.seuilMin = seuilMin;
 	}
@@ -81,17 +101,26 @@ public class Capteur{
 		return ((valeur>seuilMax) || (valeur<seuilMin));
 	}
 	
-	public String getLieu() {
-		return lieu;
-	}
-	
-	public boolean getEstConnecte() {
-		return estConnecte;
-	}
-	
-	
 	public void updateCapteurFromDB() {
 		/* remet à jour la valeur en lisant la nouvelle
 		valeur dans la base de donnée (affiche la nouvelle valeur) */
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((nom == null) ? 0 : nom.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Capteur) {
+			Capteur capteur = (Capteur) obj;
+			return ((capteur.getNom() == nom) && (capteur.getType() == type));
+		}
+		return false;
 	}
 }
