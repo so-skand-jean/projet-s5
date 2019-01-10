@@ -2,7 +2,7 @@ package main;
 
 public class Capteur{
     private String nom;
-    private Ressources type; /* enumerer a rajouter */
+    private Ressources type;
     private String batiment;
     private int etage;
     private String lieu;
@@ -59,7 +59,7 @@ public class Capteur{
 		return seuilMax;
 	}
 	
-	/* retourne la veleur que si elle existe, soit que si le capteur est connecté */
+	/* retourne la veleur que si elle existe, soit que si le capteur est connectÃ© */
 	public double getValeur() {
 		if(!estConnecte) return 0;
 		else return valeur;
@@ -102,8 +102,8 @@ public class Capteur{
 	}
 	
 	public void updateCapteurFromDB() {
-		/* remet à jour la valeur en lisant la nouvelle
-		valeur dans la base de donnée (affiche la nouvelle valeur) */
+		/* remet Ã  jour la valeur en lisant la nouvelle
+		valeur dans la base de donnÃ©e (affiche la nouvelle valeur) */
 	}
 
 	@Override
