@@ -43,8 +43,8 @@ public class UserInterface extends JFrame {
 	}
 
 	public static void main(String[] args) {
-        new UserInterface();
-        SocketCapteur.startServer(8952);
+        UserInterface ui = new UserInterface();
+        SocketCapteur sc = new SocketCapteur(ui);
 	}
 	
 	public JScrollPane fenetreCapteurs() {
@@ -95,7 +95,7 @@ public class UserInterface extends JFrame {
 			JPanel newCapteur = new JPanel();
 			newCapteur.setLayout(new GridLayout(5,0));
 			JLabel nomloc = new JLabel(listeCapteurs.get(i).getNom()+" - "+listeCapteurs.get(i).getBatiment()+" "+listeCapteurs.get(i).getEtage());
-			JLabel ressconn = new JLabel(listeCapteurs.get(i).getType()+" - "+(listeCapteurs.get(i).getEstConnecte()?"Connecté":"Déconnecté"));
+			JLabel ressconn = new JLabel(listeCapteurs.get(i).getType()+" - "+(listeCapteurs.get(i).getEstConnecte()?"Connectï¿½":"Dï¿½connectï¿½"));
 			newCapteur.add(nomloc,BorderLayout.WEST);
 			conteneurCapteurs.add(newCapteur);
 		}

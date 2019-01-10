@@ -8,7 +8,16 @@ import java.net.Socket;
 import java.util.Arrays;
 
 public class SocketCapteur {
-    public static void startServer(int port) {
+    private UserInterface ui;
+    private Logs dbInterface;
+
+    public SocketCapteur(UserInterface userInterface) {
+        ui = userInterface;
+        dbInterface = new Logs();
+        startServer(8952);
+    }
+
+    public void startServer(int port) {
         ServerSocket server;
 
         try {
@@ -22,24 +31,20 @@ public class SocketCapteur {
             e.printStackTrace();
         }
     }
-    
-    /* 
-     * public void connexion(String nomCapteur, String description){
-     * }
+
+    /*
+     * public void connexion(String nomCapteur, String description){ }
      * 
      * public void donnee(String nomCapteur, double valeur){
-     * @Skander
-     * Je voudrais avoir un tableau bidimensionnel comportant :
-     * nom,type,batiment,etage,lieu,delais,valeur du capteur
-     * }
      * 
-     * public void deconnexion(String nomCapteur){
-     * }
+     * @Skander Je voudrais avoir un tableau bidimensionnel comportant :
+     * nom,type,batiment,etage,lieu,delais,valeur du capteur }
      * 
-     * public void ecouter(){
-     * }
+     * public void deconnexion(String nomCapteur){ }
      * 
-     * */
+     * public void ecouter(){ }
+     * 
+     */
 }
 
 class LireMsg implements Runnable {
@@ -52,7 +57,7 @@ class LireMsg implements Runnable {
     public void run() {
         BufferedReader in;
         String[] data = { "" };
-        
+
         // connexion()
         while (!data[0].equals("Deconnexion")) {
             try {
