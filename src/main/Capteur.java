@@ -12,7 +12,7 @@ public class Capteur{
     private boolean estConnecte;
 
     public Capteur(Ressources type, String batiment, int etage, String lieu) {
-        this.nom = "" + nom + batiment + lieu;
+        this.nom = "capteur" + batiment + lieu;
         this.type = type;
         this.batiment = batiment;
         this.etage = etage;
@@ -79,6 +79,14 @@ public class Capteur{
 	
 	public boolean estHorsSeuil() {
 		return ((valeur>seuilMax) || (valeur<seuilMin));
+	}
+	
+	public String getLieu() {
+		return lieu;
+	}
+	
+	public boolean getEstConnecte() {
+		return estConnecte;
 	}
 	
 	

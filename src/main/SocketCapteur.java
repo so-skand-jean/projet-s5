@@ -28,6 +28,9 @@ public class SocketCapteur {
      * }
      * 
      * public void donnee(String nomCapteur, double valeur){
+     * @Skander
+     * Je voudrais avoir un tableau bidimensionnel comportant :
+     * nom,type,batiment,etage,lieu,delais,valeur du capteur
      * }
      * 
      * public void deconnexion(String nomCapteur){
@@ -56,7 +59,7 @@ class LireMsg implements Runnable {
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 data = in.readLine().split(" ");
                 System.out.println(Arrays.toString(data));
-                // donnees()
+                // donnees(data)
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -2,6 +2,7 @@ package main;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.util.ArrayList;
 
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -9,11 +10,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 public class UserInterface extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
     static String[] info = { "capteur1", "capteur2", "capteur3" };
+	Capteur cap1 = new Capteur(Ressources.EAU, "U4", 2, "couloir");
+	Capteur cap2 = new Capteur(Ressources.AIRCOMPRIME, "U3", 2, "devant202");
+	ArrayList<Capteur> listeCapteurs = new ArrayList<>();
+	
+	Logs log;
 	
 	public UserInterface (){
 		
@@ -77,7 +84,34 @@ public class UserInterface extends JFrame {
 		info_et_filtrage.add(cbGaz);
 		// Fin filtrage
 		
+
+		listeCapteurs.add(cap1);
+		listeCapteurs.add(cap2);
+		
+		JPanel conteneurCapteurs = new JPanel();
+		conteneurCapteurs.setLayout(new GridLayout(listeCapteurs.size(),0));
+	
+		for(int i = 0; i<listeCapteurs.size();i++) {
+			JPanel newCapteur = new JPanel();
+			newCapteur.setLayout(new GridLayout(5,0));
+			JLabel nomloc = new JLabel(listeCapteurs.get(i).getNom()+" - "+listeCapteurs.get(i).getBatiment()+" "+listeCapteurs.get(i).getEtage());
+			JLabel ressconn = new JLabel(listeCapteurs.get(i).getType()+" - "+(listeCapteurs.get(i).getEstConnecte()?"Connecté":"Déconnecté"));
+			newCapteur.add(nomloc,BorderLayout.WEST);
+			conteneurCapteurs.add(newCapteur);
+		}
+	
+
+		fenetreCapteurs.setViewportView(conteneurCapteurs);
+		
 		return fenetreCapteurs;
+	}
+	
+	public void handleCapteurUpdate(Capteur c) {
+		//New
+		if(listeCapteurs.contains(c)) {
+			
+		}
+
 	}
 	
 }
