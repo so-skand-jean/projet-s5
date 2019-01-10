@@ -2,7 +2,7 @@ package main;
 
 public class Capteur{
     private String nom;
-    private Ressources type; /* enumerer a rajouter */
+    private Ressources type;
     private String batiment;
     private int etage;
     private String lieu;
@@ -11,7 +11,7 @@ public class Capteur{
     private double valeur;
     private boolean estConnecte;
 
-    public Capteur(Ressources type, String batiment, int etage, String lieu) {
+    public Capteur(String nom) {
         this.nom = "capteur" + batiment + lieu;
         this.estConnecte = false;
 
