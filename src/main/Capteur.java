@@ -11,8 +11,12 @@ public class Capteur{
     private double valeur;
     private boolean estConnecte;
 
-    public Capteur(String nom) {
+    public Capteur(String nom, Ressources type, String batiment, int etage, String lieu) {
         this.nom = nom;
+        this.type = type;
+        this.batiment = batiment;
+        this.etage = etage;
+        this.lieu = lieu;
         this.estConnecte = false;
 
         switch (type) {
@@ -71,22 +75,6 @@ public class Capteur{
 	
 	public boolean getEstConnecte() {
 		return estConnecte;
-	}
-	
-	public void setBatiment(String batiment) {
-		this.batiment = batiment;
-	}
-	
-	public void setType(Ressources type) {
-		this.type = type;
-	}
-
-	public void setEtage(int etage) {
-		this.etage = etage;
-	}
-
-	public void setLieu(String lieu) {
-		this.lieu = lieu;
 	}
 
 	public void setSeuilMin(double seuilMin) {
