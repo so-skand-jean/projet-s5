@@ -19,10 +19,10 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de données :  projet-so-skand-jean
+-- Base de données :  projetsoskandjean
 --
-CREATE DATABASE IF NOT EXISTS projet-so-skand-jean DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
-USE projet-so-skand-jean;
+CREATE DATABASE IF NOT EXISTS projetsoskandjean DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+USE projetsoskandjean;
 
 -- --------------------------------------------------------
 
