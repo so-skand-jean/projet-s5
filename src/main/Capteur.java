@@ -12,7 +12,7 @@ public class Capteur{
     private boolean estConnecte;
 
     public Capteur(String nom) {
-        this.nom = "capteur" + batiment + lieu;
+        this.nom = nom;
         this.estConnecte = false;
 
         switch (type) {
