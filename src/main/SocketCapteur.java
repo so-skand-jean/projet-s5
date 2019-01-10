@@ -22,6 +22,21 @@ public class SocketCapteur {
             e.printStackTrace();
         }
     }
+    
+    /* 
+     * public void connexion(String nomCapteur, String description){
+     * }
+     * 
+     * public void donnee(String nomCapteur, double valeur){
+     * }
+     * 
+     * public void deconnexion(String nomCapteur){
+     * }
+     * 
+     * public void ecouter(){
+     * }
+     * 
+     * */
 }
 
 class LireMsg implements Runnable {

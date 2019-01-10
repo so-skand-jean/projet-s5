@@ -43,11 +43,47 @@ public class Capteur {
 		return nom;
 	}
 	
-	public getType() {
+	public Ressources getType() {
 		return type;
 	}
 	
-	public getBatiment() {
+	public String getBatiment() {
 		return batiment;
+	}
+	
+	public int getEtage() {
+		return etage;
+	}
+	
+	public double getSeuilMin() {
+		return seuilMin;
+	}
+	
+	public double getSeuilMax() {
+		return seuilMax;
+	}
+	
+	/* retourne la veleur que si elle existe, soit que si le capteur est connecté */
+	public double getValeur() {
+		if(!estConnecte) return null;
+		else return valeur;
+	}
+	
+	public void setSeuilMin(double seuilMin) {
+		this.seuilMin = seuilMin;
+	}
+	
+	public void setSeuilMax(double seuilMax) {
+		this.seuilMax = seuilMax;
+	}
+	
+	public booelan estHorsSeuil() {
+		return ((valeur>seuilMax) || (valeur<seuilMin));
+	}
+	
+	
+	public void updateCapteurFromDB() {
+		/* remet à jour la valeur en lisant la nouvelle
+		valeur dans la base de donnée (affiche la nouvelle valeur) */
 	}
 }
