@@ -3,7 +3,11 @@ package main;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.util.ArrayList;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
+import javax.swing.BoxLayout;
+import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -18,19 +22,22 @@ public class UserInterface extends JFrame {
     static String[] info = { "capteur1", "capteur2", "capteur3" };
 	Capteur cap1 = new Capteur(Ressources.EAU, "U4", 2, "couloir");
 	Capteur cap2 = new Capteur(Ressources.AIRCOMPRIME, "U3", 2, "devant202");
-	ArrayList<Capteur> listeCapteurs = new ArrayList<>();
+	TreeMap<String,Capteur> mapCapteurs;
+	
+	//Pannel
+	JPanel conteneurCapteurs = new JPanel();
 	
 	Logs log;
 	
 	public UserInterface (){
 		
 		JFrame ic = new JFrame();
+		log = new Logs();
+		mapCapteurs = log.getAllCapteurs();
 	
 		ic.setLayout(new GridLayout(1,2));
 		
 		ic.add(fenetreCapteurs());
-		
-	
 		
 	    //Définit un titre pour notre fenêtre
 	    ic.setTitle("Gestion de capteurs");
@@ -84,23 +91,7 @@ public class UserInterface extends JFrame {
 		info_et_filtrage.add(cbGaz);
 		// Fin filtrage
 		
-
-		listeCapteurs.add(cap1);
-		listeCapteurs.add(cap2);
-		
-		JPanel conteneurCapteurs = new JPanel();
-		conteneurCapteurs.setLayout(new GridLayout(listeCapteurs.size(),0));
-	
-		for(int i = 0; i<listeCapteurs.size();i++) {
-			JPanel newCapteur = new JPanel();
-			newCapteur.setLayout(new GridLayout(5,0));
-			JLabel nomloc = new JLabel(listeCapteurs.get(i).getNom()+" - "+listeCapteurs.get(i).getBatiment()+" "+listeCapteurs.get(i).getEtage());
-			JLabel ressconn = new JLabel(listeCapteurs.get(i).getType()+" - "+(listeCapteurs.get(i).getEstConnecte()?"Connect�":"D�connect�"));
-			newCapteur.add(nomloc,BorderLayout.WEST);
-			conteneurCapteurs.add(newCapteur);
-		}
-	
-
+		setLayout(new BoxLayout(conteneurCapteurs,BoxLayout.Y_AXIS));
 		fenetreCapteurs.setViewportView(conteneurCapteurs);
 		
 		return fenetreCapteurs;
@@ -108,8 +99,18 @@ public class UserInterface extends JFrame {
 	
 	public void handleCapteurUpdate(Capteur c) {
 		//New
-		if(listeCapteurs.contains(c)) {
-			
+		if(!mapCapteurs.containsKey(c.getNom())) {
+			mapCapteurs.put(c.getNom(),c);
+			JPanel newCapteur = new JPanel();
+			setLayout(new BoxLayout(newCapteur,BoxLayout.Y_AXIS));
+			JLabel nomloc = new JLabel(c.getNom()+" - "+c.getBatiment()+" "+c.getEtage());
+			JLabel ressconn = new JLabel(c.getType()+" - "+(c.getEstConnecte()?"Connect�":"D�connect�"));
+			newCapteur.add(nomloc,BorderLayout.WEST);
+			newCapteur.add(ressconn,BorderLayout.WEST);
+			conteneurCapteurs.add(newCapteur);
+		} else {
+			//Update
+			mapCapteurs.put(c.getNom(), c);
 		}
 
 	}
