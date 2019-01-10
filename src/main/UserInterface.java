@@ -1,6 +1,7 @@
 package main;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.TreeMap;
@@ -31,7 +32,7 @@ public class UserInterface extends JFrame {
 		JFrame ic = new JFrame();
 		log = new Logs();
 		mapCapteurs = log.getAllCapteurs();
-	
+		
 		ic.setLayout(new GridLayout(1,2));
 		
 		ic.add(fenetreCapteurs());
@@ -100,14 +101,22 @@ public class UserInterface extends JFrame {
 			mapCapteurs.put(c.getNom(),c);
 			JPanel newCapteur = new JPanel();
 			setLayout(new BoxLayout(newCapteur,BoxLayout.Y_AXIS));
+			//Nom - Batiment Etage
 			JLabel nomloc = new JLabel(c.getNom()+" - "+c.getBatiment()+" "+c.getEtage());
-			JLabel ressconn = new JLabel(c.getType()+" - "+(c.getEstConnecte()?"Connect�":"D�connect�"));
+			Font font1 = new Font("Arial",Font.ITALIC,15);
+			nomloc.setFont(font1);
+			//Type - Connecte/Deconnecte
+			JLabel ressconn = new JLabel(c.getType()+" - "+(c.getEstConnecte()?"Connecte":"Deconnecte"));
+			Font font2 = new Font("Arial",Font.BOLD,13);
+			ressconn.setFont(font2);
+			//
 			newCapteur.add(nomloc,BorderLayout.WEST);
 			newCapteur.add(ressconn,BorderLayout.WEST);
 			conteneurCapteurs.add(newCapteur);
 		} else {
 			//Update
 			mapCapteurs.put(c.getNom(), c);
+			conteneurCapteurs.updateUI();
 		}
 
 	}
