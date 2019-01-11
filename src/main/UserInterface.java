@@ -1,21 +1,22 @@
 package main;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.swing.BoxLayout;
-import javax.swing.GroupLayout;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import javax.swing.JTextField;
 
 public class UserInterface extends JFrame {
 	
@@ -24,23 +25,20 @@ public class UserInterface extends JFrame {
 	
 	//Pannel
 	JPanel conteneurCapteurs = new JPanel();
+	JFrame ic = new JFrame();
 	
 	Logs log;
 	
 	public UserInterface (){
-		
-		JFrame ic = new JFrame();
 		log = new Logs();
 		mapCapteurs = log.getAllCapteurs();
 		
 		ic.setLayout(new GridLayout(1,2));
 		
-		ic.add(fenetreCapteurs());
-		
+		ic.add(connecterPort());
+		ic.pack();
 	    //DÃ©finit un titre pour notre fenÃªtre
 	    ic.setTitle("Gestion de capteurs");
-	    //DÃ©finit sa taille : 400 pixels de large et 800 pixels de haut
-	    ic.setSize(900, 800);
 	    //Positionnement au centre
 	    ic.setLocationRelativeTo(null);
 	    ic.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
@@ -49,13 +47,14 @@ public class UserInterface extends JFrame {
 
 	public static void main(String[] args) {
         UserInterface ui = new UserInterface();
-        SocketCapteur sc = new SocketCapteur(ui);
+        SocketCapteur sc = new SocketCapteur();
 	}
 	
 	public JScrollPane fenetreCapteurs() {
 		//Fenetre des capteurs
 		
 		JScrollPane fenetreCapteurs = new JScrollPane();
+		ic.add(fenetreCapteurs);
 		
 		JScrollBar scrollBar = new JScrollBar();
 		fenetreCapteurs.setRowHeaderView(scrollBar);
@@ -69,7 +68,8 @@ public class UserInterface extends JFrame {
 		filtrage.add(lblCapteurs);
 		
 		JLabel nbCapteurs = new JLabel("");
-		nbCapteurs.setText(String.valueOf(mapCapteurs.size()));
+		//nbCapteurs.setText(String.valueOf(mapCapteurs.size()));
+		nbCapteurs.setText("NaN");
 		filtrage.add(nbCapteurs, BorderLayout.WEST);
 		
 		JPanel info_et_filtrage = new JPanel();
@@ -119,6 +119,30 @@ public class UserInterface extends JFrame {
 			conteneurCapteurs.updateUI();
 		}
 
+	}
+	
+	private JPanel connecterPort() {
+		
+		JPanel conteneurConnexion = new JPanel();
+		JLabel portDeConnexion = new JLabel("Port de connexion : ");
+		JTextField porttf = new JTextField("3306");
+		JButton confirm = new JButton("Confirmer");
+		
+		confirm.addActionListener(e -> { 
+								    ic.remove(conteneurConnexion);
+								    ic.add(fenetreCapteurs());
+								    ic.revalidate();
+								    ic.repaint();
+								    ic.setSize(800,900);
+								    ic.setLocationRelativeTo(null);
+								  });
+		
+		conteneurConnexion.setLayout(new FlowLayout());
+		conteneurConnexion.add(portDeConnexion);
+		conteneurConnexion.add(porttf);
+		conteneurConnexion.add(confirm);
+		
+		return conteneurConnexion;
 	}
 	
 }
