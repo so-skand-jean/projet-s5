@@ -1,9 +1,14 @@
 package main;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.util.ArrayList;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
+import javax.swing.BoxLayout;
+import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -15,26 +20,26 @@ import javax.swing.JTable;
 public class UserInterface extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
-    static String[] info = { "capteur1", "capteur2", "capteur3" };
-	Capteur cap1 = new Capteur(Ressources.EAU, "U4", 2, "couloir");
-	Capteur cap2 = new Capteur(Ressources.AIRCOMPRIME, "U3", 2, "devant202");
-	ArrayList<Capteur> listeCapteurs = new ArrayList<>();
+	TreeMap<String,Capteur> mapCapteurs;
+	
+	//Pannel
+	JPanel conteneurCapteurs = new JPanel();
 	
 	Logs log;
 	
 	public UserInterface (){
 		
 		JFrame ic = new JFrame();
-	
+		log = new Logs();
+		mapCapteurs = log.getAllCapteurs();
+		
 		ic.setLayout(new GridLayout(1,2));
 		
 		ic.add(fenetreCapteurs());
 		
-	
-		
-	    //Définit un titre pour notre fenêtre
+	    //DÃ©finit un titre pour notre fenÃªtre
 	    ic.setTitle("Gestion de capteurs");
-	    //Définit sa taille : 400 pixels de large et 800 pixels de haut
+	    //DÃ©finit sa taille : 400 pixels de large et 800 pixels de haut
 	    ic.setSize(900, 800);
 	    //Positionnement au centre
 	    ic.setLocationRelativeTo(null);
@@ -43,8 +48,8 @@ public class UserInterface extends JFrame {
 	}
 
 	public static void main(String[] args) {
-        new UserInterface();
-        SocketCapteur.startServer(8952);
+        UserInterface ui = new UserInterface();
+        SocketCapteur sc = new SocketCapteur(ui);
 	}
 	
 	public JScrollPane fenetreCapteurs() {
@@ -64,7 +69,7 @@ public class UserInterface extends JFrame {
 		filtrage.add(lblCapteurs);
 		
 		JLabel nbCapteurs = new JLabel("");
-		nbCapteurs.setText(String.valueOf(info.length));
+		nbCapteurs.setText(String.valueOf(mapCapteurs.size()));
 		filtrage.add(nbCapteurs, BorderLayout.WEST);
 		
 		JPanel info_et_filtrage = new JPanel();
@@ -84,23 +89,7 @@ public class UserInterface extends JFrame {
 		info_et_filtrage.add(cbGaz);
 		// Fin filtrage
 		
-
-		listeCapteurs.add(cap1);
-		listeCapteurs.add(cap2);
-		
-		JPanel conteneurCapteurs = new JPanel();
-		conteneurCapteurs.setLayout(new GridLayout(listeCapteurs.size(),0));
-	
-		for(int i = 0; i<listeCapteurs.size();i++) {
-			JPanel newCapteur = new JPanel();
-			newCapteur.setLayout(new GridLayout(5,0));
-			JLabel nomloc = new JLabel(listeCapteurs.get(i).getNom()+" - "+listeCapteurs.get(i).getBatiment()+" "+listeCapteurs.get(i).getEtage());
-			JLabel ressconn = new JLabel(listeCapteurs.get(i).getType()+" - "+(listeCapteurs.get(i).getEstConnecte()?"Connect�":"D�connect�"));
-			newCapteur.add(nomloc,BorderLayout.WEST);
-			conteneurCapteurs.add(newCapteur);
-		}
-	
-
+		setLayout(new BoxLayout(conteneurCapteurs,BoxLayout.Y_AXIS));
 		fenetreCapteurs.setViewportView(conteneurCapteurs);
 		
 		return fenetreCapteurs;
@@ -108,8 +97,26 @@ public class UserInterface extends JFrame {
 	
 	public void handleCapteurUpdate(Capteur c) {
 		//New
-		if(listeCapteurs.contains(c)) {
-			
+		if(!mapCapteurs.containsKey(c.getNom())) {
+			mapCapteurs.put(c.getNom(),c);
+			JPanel newCapteur = new JPanel();
+			setLayout(new BoxLayout(newCapteur,BoxLayout.Y_AXIS));
+			//Nom - Batiment Etage
+			JLabel nomloc = new JLabel(c.getNom()+" - "+c.getBatiment()+" "+c.getEtage());
+			Font font1 = new Font("Arial",Font.ITALIC,15);
+			nomloc.setFont(font1);
+			//Type - Connecte/Deconnecte
+			JLabel ressconn = new JLabel(c.getType()+" - "+(c.getEstConnecte()?"Connecte":"Deconnecte"));
+			Font font2 = new Font("Arial",Font.BOLD,13);
+			ressconn.setFont(font2);
+			//
+			newCapteur.add(nomloc,BorderLayout.WEST);
+			newCapteur.add(ressconn,BorderLayout.WEST);
+			conteneurCapteurs.add(newCapteur);
+		} else {
+			//Update
+			mapCapteurs.put(c.getNom(), c);
+			conteneurCapteurs.updateUI();
 		}
 
 	}
