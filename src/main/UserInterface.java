@@ -1,11 +1,15 @@
 package main;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
 import java.util.TreeMap;
 
 import javax.swing.BoxLayout;
@@ -17,11 +21,20 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 public class UserInterface extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
-	TreeMap<String,Capteur> mapCapteurs;
+	private TreeMap<String,Capteur> mapCapteurs;
+	private DefaultCategoryDataset dataChart = new DefaultCategoryDataset();
 	
 	//Pannel
 	JPanel conteneurCapteurs = new JPanel();
@@ -32,8 +45,6 @@ public class UserInterface extends JFrame {
 	public UserInterface (){
 		log = new Logs();
 		mapCapteurs = log.getAllCapteurs();
-		
-		ic.setLayout(new GridLayout(1,2));
 		
 		ic.add(connecterPort());
 		ic.pack();
@@ -50,11 +61,13 @@ public class UserInterface extends JFrame {
         SocketCapteur sc = new SocketCapteur();
 	}
 	
-	public JScrollPane fenetreCapteurs() {
+	public JPanel fenetreCapteurs() {
 		//Fenetre des capteurs
-		
+		JPanel fenetreCap = new JPanel();
 		JScrollPane fenetreCapteurs = new JScrollPane();
-		ic.add(fenetreCapteurs);
+		
+		fenetreCap.setLayout(new GridLayout(1,2));
+		ic.add(fenetreCap);
 		
 		JScrollBar scrollBar = new JScrollBar();
 		fenetreCapteurs.setRowHeaderView(scrollBar);
@@ -68,8 +81,7 @@ public class UserInterface extends JFrame {
 		filtrage.add(lblCapteurs);
 		
 		JLabel nbCapteurs = new JLabel("");
-		//nbCapteurs.setText(String.valueOf(mapCapteurs.size()));
-		nbCapteurs.setText("NaN");
+		nbCapteurs.setText(String.valueOf(mapCapteurs.size()));
 		filtrage.add(nbCapteurs, BorderLayout.WEST);
 		
 		JPanel info_et_filtrage = new JPanel();
@@ -88,11 +100,24 @@ public class UserInterface extends JFrame {
 		JCheckBox cbGaz = new JCheckBox("Gaz");
 		info_et_filtrage.add(cbGaz);
 		// Fin filtrage
+		fenetreCap.add(fenetreCapteurs,0,0);
+		
+		// Debut Graph
+		
+		JFreeChart lineChart = ChartFactory.createLineChart(
+		         "",
+		         "Temps","Valeur",
+		         dataChart,
+		         PlotOrientation.VERTICAL,
+		         false,false,false);
+		         
+		ChartPanel chartPanel = new ChartPanel( lineChart );
+		fenetreCap.add(chartPanel,0,1);
 		
 		setLayout(new BoxLayout(conteneurCapteurs,BoxLayout.Y_AXIS));
 		fenetreCapteurs.setViewportView(conteneurCapteurs);
 		
-		return fenetreCapteurs;
+		return fenetreCap;
 	}
 	
 	public void handleCapteurUpdate(Capteur c) {
@@ -109,9 +134,195 @@ public class UserInterface extends JFrame {
 			JLabel ressconn = new JLabel(c.getType()+" - "+(c.getEstConnecte()?"Connecte":"Deconnecte"));
 			Font font2 = new Font("Arial",Font.BOLD,13);
 			ressconn.setFont(font2);
+			//[VALEUR]
+			JLabel val = new JLabel(String.valueOf(c.getValeur()));
+			Font fontVal = new Font("Arial",Font.BOLD,15);
+			val.setFont(fontVal);
+			val.setBackground(Color.WHITE);
+			//De : x à : x
+			JPanel periode = new JPanel();
+			periode.setLayout(new GridLayout(2,1));
+			
+			Date date = new Date();
+			DateFormat dtfDate = new SimpleDateFormat("dd/MM/yyyy");
+			
+			JLabel deBorne = new JLabel("De : ");
+			JTextField deTF = new JTextField("01/01/2018");
+			JLabel aBorne = new JLabel("A : ");
+			JTextField aTF = new JTextField(dtfDate.format(date));
+			
+			DateFormat dtfTemps = new SimpleDateFormat("HH:mm:ss");
+			
+			JTextField deTemps = new JTextField("00:00:00");
+			JTextField aTemps = new JTextField(dtfTemps.format(date));
+			
+			JLabel errorDate = new JLabel("Err : jj/mm/yyyy");
+			
+			DocumentListener listenerDate = new DocumentListener(){
+			    @Override
+			    public void insertUpdate(DocumentEvent de){
+			       event(de);
+			    }
+
+			    @Override
+			    public void removeUpdate(DocumentEvent de) {
+			        event(de);
+			    }
+
+			    @Override
+			    public void changedUpdate(DocumentEvent de){
+			        event(de);
+			    }
+
+			    private void event(DocumentEvent de){
+			    	
+			    	Date verif = null;
+			    	Boolean showornot = false;
+			    	
+		    		try {
+						verif = dtfDate.parse(de.toString());
+					} catch (ParseException e1) {
+						verif = null;
+		    			showornot = true;
+						e1.printStackTrace();
+					}
+		    		
+		    		if(de.toString().equals(dtfDate.format(verif))) {
+		    			
+		    			SimpleDateFormat form = new SimpleDateFormat("jj/mm/yyyy");
+		    			Date date1;
+		    			Date date2;
+						try {
+							date1 = form.parse(deTF.getText());
+							date2 = form.parse(aTF.getText());
+						} catch (ParseException e1) {
+							date1 = null;
+			    			date2 = new Date();
+							e1.printStackTrace();
+						}
+		    			
+		    			dataChart.clear();
+		    			TreeMap<Date,Capteur> logCapteur = new TreeMap<>();
+		    			int elem = 1;
+		    			/*
+		    			 * ECRIRE ICI LE CODE QUI VA PIOCHER DANS LE LOG
+		    			 * 
+		    			 */
+		    			for(Map.Entry<Date,Capteur> e : logCapteur.entrySet()) {
+		    				  Date date = e.getKey();
+		    				  Capteur capteur = e.getValue();
+		    				  if(date.after(date1)&&date.before(date2)) {
+		    					  dataChart.addValue(capteur.getValeur(), "R"+elem, "Valeur");
+			    				  dataChart.addValue(date.getTime()/1000, "R"+elem, "Date");
+		    				  }
+		    				  elem++;
+		    			}
+		    		}
+		    		
+			        errorDate.setVisible(showornot);
+			        periode.revalidate();
+			        periode.repaint();
+			    }
+			};
+			
+			JLabel errorTemps = new JLabel("Err : hh:mm:ss");
+			
+			DocumentListener listenerTemps = new DocumentListener(){
+			    @Override
+			    public void insertUpdate(DocumentEvent de){
+			       event(de);
+			    }
+
+			    @Override
+			    public void removeUpdate(DocumentEvent de) {
+			        event(de);
+			    }
+
+			    @Override
+			    public void changedUpdate(DocumentEvent de){
+			        event(de);
+			    }
+
+			    private void event(DocumentEvent de){
+			    	
+			    	Date verif = null;
+			    	Boolean showornot = false;
+			    	
+		    		try {
+						verif = dtfDate.parse(de.toString());
+					} catch (ParseException e1) {
+						verif = null;
+		    			showornot = true;
+						e1.printStackTrace();
+					}
+		    		
+		    		if(de.toString().equals(dtfDate.format(verif))) {
+		    			
+		    			SimpleDateFormat form = new SimpleDateFormat("jj/mm/yyyy hh:mm:ss");
+		    			Date date1;
+		    			Date date2;
+						try {
+							date1 = form.parse(deTF.getText()+" "+deTemps.getText());
+							date2 = form.parse(aTF.getText()+" "+aTemps.getText());
+						} catch (ParseException e1) {
+							date1 = null;
+			    			date2 = new Date();
+							e1.printStackTrace();
+						}
+		    			
+		    			dataChart.clear();
+		    			TreeMap<Date,Capteur> logCapteur = new TreeMap<>();
+		    			int elem = 1;
+		    			/*
+		    			 * ECRIRE ICI LE CODE QUI VA PIOCHER DANS LE LOG
+		    			 * 
+		    			 */
+		    			for(Map.Entry<Date,Capteur> e : logCapteur.entrySet()) {
+		    				  Date date = e.getKey();
+		    				  Capteur capteur = e.getValue();
+		    				  if(date.after(date1)&&date.before(date2)) {
+		    					  dataChart.addValue(capteur.getValeur(), "R"+elem, "Valeur");
+			    				  dataChart.addValue(date.getTime()/1000, "R"+elem, "Date");
+		    				  }
+		    				  elem++;
+		    			}
+
+		    		}
+		    		
+			        errorDate.setVisible(showornot);
+			        periode.revalidate();
+			        periode.repaint();
+			    }
+			};
+			
+			periode.add(deBorne,0,0);
+			periode.add(deTF,0,0);
+			periode.add(deTemps,0,0);
+			periode.add(aBorne,1,0);
+			periode.add(aTF,1,0);
+			periode.add(aTemps,1,0);
+			
+			//Action -> Graph
+			/*newCapteur.addMouseListener(new MouseAdapter() {
+
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    dataChart.clear();
+                    while(logs.getValeurs(c,)) {
+                    	dataChart.addValue(c.getValeur(), "R1", "C1");
+                    }
+                }
+
+            });*/
 			//
 			newCapteur.add(nomloc,BorderLayout.WEST);
 			newCapteur.add(ressconn,BorderLayout.WEST);
+			newCapteur.add(val,BorderLayout.WEST);
+			//
+			newCapteur.add(periode,BorderLayout.EAST);
+			newCapteur.add(errorDate);
+			newCapteur.add(errorTemps);
+			//
 			conteneurCapteurs.add(newCapteur);
 		} else {
 			//Update
