@@ -295,6 +295,12 @@ public class UserInterface extends JFrame {
 			    }
 			};
 			
+			
+			deTF.getDocument().addDocumentListener(listenerDate);
+			aTF.getDocument().addDocumentListener(listenerDate);
+			deTemps.getDocument().addDocumentListener(listenerTemps);
+			aTemps.getDocument().addDocumentListener(listenerTemps);
+			
 			periode.add(deBorne,0,0);
 			periode.add(deTF,0,0);
 			periode.add(deTemps,0,0);
