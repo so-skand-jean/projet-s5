@@ -64,8 +64,8 @@ public class Logs{
 				batimentC = rst.getString(3);
 				etageC = rst.getInt(4);
 				lieuC = rst.getString(5);
-				seuilMinC = Double.parseDouble(rst.getString(6));
-				seuilMaxC = Double.parseDouble(rst.getString(7));
+				seuilMinC = rst.getDouble(6);
+				seuilMaxC = rst.getDouble(7);
 				Capteur x = new Capteur(nomC, typeC, batimentC,etageC, lieuC);
 				x.setSeuilMin(seuilMinC);
 				x.setSeuilMax(seuilMaxC);
