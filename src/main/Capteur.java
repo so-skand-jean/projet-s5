@@ -63,7 +63,7 @@ public class Capteur{
 		return seuilMax;
 	}
 	
-	/* retourne la veleur que si elle existe, soit que si le capteur est connecté */
+	/* retourne la veleur que si elle existe, soit que si le capteur est connectÃ© */
 	public double getValeur() {
 		if(!estConnecte) return 0;
 		else return valeur;
@@ -89,9 +89,9 @@ public class Capteur{
 		return ((valeur>seuilMax) || (valeur<seuilMin));
 	}
 	
-	public void updateCapteurFromDB() {
-		/* remet à jour la valeur en lisant la nouvelle
-		valeur dans la base de donnée (affiche la nouvelle valeur) */
+	public void updateCapteurFromDB(Logs l) {
+		valeur = l.getCapteurValeur(this);
+		System.out.println("valeur = " + valeur);
 	}
 
 	@Override
