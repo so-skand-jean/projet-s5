@@ -11,7 +11,6 @@ import java.sql.PreparedStatement;
 import java.sql.Timestamp;
 
 public class Logs{
-	/* table Capteur */
 	final int COLUMN_CAPTEUR_NOM = 1;
 	final int COLUMN_CAPTEUR_TYPE = 2;
 	final int COLUMN_CAPTEUR_BATIMENT = 3;
@@ -21,9 +20,6 @@ public class Logs{
 	final int COLUMN_CAPTEUR_SEUILMAX = 7;
 	final int COLUMN_CAPTEUR_SURNOM = 8;
 	final int COLUMN_CAPTEUR_DATE = 9;
-	
-	/* A CONTINUER */
-	
 	final int COLUMN_LOGS_NOM = 1;
 	final int COLUMN_LOGS_DATE = 2;
 	final int COLUMN_LOGS_VALEUR = 3;
