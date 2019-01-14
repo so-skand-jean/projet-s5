@@ -6,13 +6,7 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.event.ItemEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,7 +15,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -323,17 +316,14 @@ public class UserInterface extends JFrame {
 						}
 		    			
 		    			dataChart.clear();
-		    			TreeMap<Date,Capteur> logCapteur = new TreeMap<>();
+		    			TreeMap<Date,Double> logCapteur = log.getCapteurValeurs(c, date1, date2);
 		    			int elem = 1;
-		    			/*
-		    			 * ECRIRE ICI LE CODE QUI VA PIOCHER DANS LE LOG
-		    			 * 
-		    			 */
-		    			for(Map.Entry<Date,Capteur> e : logCapteur.entrySet()) {
+		 
+		    			for(Map.Entry<Date,Double> e : logCapteur.entrySet()) {
 		    				  Date date = e.getKey();
-		    				  Capteur capteur = e.getValue();
+		    				  Double valeur = e.getValue();
 		    				  if(date.after(date1)&&date.before(date2)) {
-		    					  dataChart.addValue(capteur.getValeur(), "R"+elem, "Valeur");
+		    					  dataChart.addValue(valeur, "R"+elem, "Valeur");
 			    				  dataChart.addValue(date.getTime()/1000, "R"+elem, "Date");
 		    				  }
 		    				  elem++;
