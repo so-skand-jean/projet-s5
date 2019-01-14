@@ -50,6 +50,10 @@ public class UserInterface extends JFrame {
 	
 	Logs log;
 	
+	/**
+	 * @category Constructor
+	 */
+	
 	public UserInterface (){
 		log = new Logs();
 		mapCapteurs = log.getAllCapteurs();
@@ -69,6 +73,11 @@ public class UserInterface extends JFrame {
         SocketCapteur sc = new SocketCapteur();
 	}
 	
+	
+	/**
+	 * Cette fonction permet de créer l'écran de visualisation des capteurs et du graphique, la fenetre est la valeur retournée.
+	 * @return JPanel
+	 */
 	public JPanel fenetreCapteurs() {
 		//Fenetre des capteurs
 		JPanel fenetreCap = new JPanel();
@@ -453,6 +462,14 @@ public class UserInterface extends JFrame {
 			JTextField min = new JTextField(Double.toString(c.getSeuilMin()));
 			JTextField max = new JTextField(Double.toString(c.getSeuilMax()));
 			
+			JPanel sud = new JPanel();
+			sud.setLayout(new GridLayout(2,1));
+			sud.add(seuilMin,1,1);
+			sud.add(min,1,1);
+			sud.add(seuilMax,1,1);
+			sud.add(max,1,1);
+			sud.add(warning,2,1);
+			
 			DocumentListener listenerMin = new DocumentListener(){
 			    @Override
 			    public void insertUpdate(DocumentEvent de){
@@ -514,6 +531,8 @@ public class UserInterface extends JFrame {
 			
 			min.getDocument().addDocumentListener(listenerMin);
 			max.getDocument().addDocumentListener(listenerMax);
+			
+			newCapteur.add(sud,BorderLayout.SOUTH);
 			
 			conteneurCapteurs.add(newCapteur);
 		} else {
