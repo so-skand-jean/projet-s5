@@ -537,6 +537,8 @@ public class UserInterface extends JFrame {
 			newCapteur.add(sud,BorderLayout.SOUTH);
 			
 			conteneurCapteurs.add(newCapteur);
+			conteneurCapteurs.revalidate();
+			conteneurCapteurs.repaint();
 		} else {
 			//Update
 			mapCapteurs.put(c.getNom(), c);
