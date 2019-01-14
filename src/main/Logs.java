@@ -11,18 +11,18 @@ import java.sql.PreparedStatement;
 import java.sql.Timestamp;
 
 public class Logs{
-	final int COLUMN_CAPTEUR_NOM = 1;
-	final int COLUMN_CAPTEUR_TYPE = 2;
-	final int COLUMN_CAPTEUR_BATIMENT = 3;
-	final int COLUMN_CAPTEUR_ETAGE = 4;
-	final int COLUMN_CAPTEUR_LIEU = 5;
-	final int COLUMN_CAPTEUR_SEUILMIN = 6;
-	final int COLUMN_CAPTEUR_SEUILMAX = 7;
-	final int COLUMN_CAPTEUR_SURNOM = 8;
-	final int COLUMN_CAPTEUR_DATE = 9;
-	final int COLUMN_LOGS_NOM = 1;
-	final int COLUMN_LOGS_DATE = 2;
-	final int COLUMN_LOGS_VALEUR = 3;
+	private final int COLUMN_CAPTEUR_NOM = 1;
+	private final int COLUMN_CAPTEUR_TYPE = 2;
+	private final int COLUMN_CAPTEUR_BATIMENT = 3;
+	private final int COLUMN_CAPTEUR_ETAGE = 4;
+	private final int COLUMN_CAPTEUR_LIEU = 5;
+	private final int COLUMN_CAPTEUR_SEUILMIN = 6;
+	private final int COLUMN_CAPTEUR_SEUILMAX = 7;
+	private final int COLUMN_CAPTEUR_SURNOM = 8;
+	private final int COLUMN_CAPTEUR_DATE = 9;
+	private final int COLUMN_LOGS_NOM = 1;
+	private final int COLUMN_LOGS_DATE = 2;
+	private final int COLUMN_LOGS_VALEUR = 3;
 			
 	
 	/**
