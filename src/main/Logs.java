@@ -12,20 +12,23 @@ import java.sql.Timestamp;
 public class Logs{
 	
 	public double getCapteurValeur(Capteur c){
-		Connection con;
+		
 		double valeur = 0;
 		try {
+			Connection con;
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/projetsoskandjean?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", "root", "");
 			
 			Statement stmt = con.createStatement();
 			ResultSet rst = stmt.executeQuery("SELECT * FROM Logs");
-			boolean capteurTrouve = false;
-			while(!capteurTrouve && rst.next()) {
+			Date date = new java.sql.Timestamp(0);
+			while(rst.next()) {
 				String nomC = rst.getString(1);
-				if(c.getNom().equals(nomC)) capteurTrouve = true;
+				if(c.getNom().equals(nomC) && ((date.before(rst.getDate(2))) || (date == rst.getDate(2)))) {
+					date = rst.getDate(2);
+					valeur = rst.getDouble(3);	
+				}
 			}
-			valeur = Double.parseDouble(rst.getString(3));	
 			con.close();
 			stmt.close();
 			rst.close();
@@ -160,4 +163,43 @@ public class Logs{
 		
 	}
 	
+	private boolean between(Date date, Date debut, Date fin) {
+		int comparaison = date.compareTo(debut);
+		if(comparaison == 0) return true;
+		else if(comparaison<0) {
+			comparaison = date.compareTo(fin);
+			if(comparaison == 0 || comparaison <0) return true;
+		}
+		return false;
+	}
+	
+	public TreeMap<Date, Double> getCapteurValeurs(Capteur c, Date debut, Date fin){
+		TreeMap<Date, Double> t = new TreeMap<>();
+		try {
+			Connection con;
+			Double valeur;
+			Date date;
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/projetsoskandjean?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", "root", "");
+			
+			Statement stmt = con.createStatement();
+			ResultSet rst = stmt.executeQuery("SELECT * FROM Logs");
+			
+			while(rst.next()) {
+				String nomC = rst.getString(1);
+				if(c.getNom().equals(nomC) && (between(rst.getDate(2), debut, fin))) {
+					date = rst.getDate(2);
+					valeur = rst.getDouble(3);	
+					t.put(date,  valeur);
+				}
+			}
+			con.close();
+			stmt.close();
+			rst.close();
+		}catch(SQLException | ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		return t;
+	}
 }
