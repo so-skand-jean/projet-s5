@@ -28,7 +28,7 @@ public class Logs{
 	/**
 	 * 
 	 * @param c
-	 * @return
+	 * @return la valeur du capteur enregistré dans la base de donnée
 	 */
 	public double getCapteurValeur(Capteur c){
 		Connection con = null;
@@ -68,6 +68,10 @@ public class Logs{
 		return valeur;
 	}
 		
+	/**
+	 * 
+	 * @return liste des capteurs dans la base de donnée
+	 */
 	public TreeMap<String, Capteur> getAllCapteurs(){ 
 		
 		// TreeMap ===>>> nom capteur - capteur
@@ -121,6 +125,15 @@ public class Logs{
 		return liste;
 	}
 	
+	/**
+	 * 
+	 * @param nom
+	 * @param type
+	 * @param batiment
+	 * @param etage
+	 * @param lieu
+	 * rajoute un capteur dans la base de donnée
+	 */
 	public void setNewCapteur(String nom, Ressources type, String batiment, int etage, String lieu) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -160,6 +173,11 @@ public class Logs{
 		}
 	}
 	
+	/**
+	 * 
+	 * @param c
+	 * met à jour les données d'un élément capteur en fonction des données dans la base de données
+	 */
 	public void updateCapteur(Capteur c) {
 		// le trouver dans la BDD et le modifier dans la base de donnee avec ses nouvelles informations
 		Connection con = null;
@@ -225,6 +243,13 @@ public class Logs{
 		return false;
 	}
 	
+	/**
+	 * 
+	 * @param c
+	 * @param debut
+	 * @param fin
+	 * @return une map<date, valeur> de la liste des valeurs de c avec la date de chaque valeur, entre les date debut et fin
+	 */
 	public TreeMap<Date, Double> getCapteurValeurs(Capteur c, Date debut, Date fin){
 		TreeMap<Date, Double> t = new TreeMap<>();
 		Connection con = null;
