@@ -70,12 +70,14 @@ public class UserInterface extends JFrame {
 
 	public static void main(String[] args) {
         UserInterface ui = new UserInterface();
-        SocketCapteur sc = new SocketCapteur();
+        SocketCapteur sc = new SocketCapteur(ui);
+        // mÃ©thode pour lancer l'Ã©coute du serveur, port par dÃ©faut
+        sc.startServer(8952);
 	}
 	
 	
 	/**
-	 * Cette fonction permet de créer l'écran de visualisation des capteurs et du graphique, la fenetre est la valeur retournée.
+	 * Cette fonction permet de crï¿½er l'ï¿½cran de visualisation des capteurs et du graphique, la fenetre est la valeur retournï¿½e.
 	 * @return JPanel
 	 */
 	public JPanel fenetreCapteurs() {
@@ -262,7 +264,7 @@ public class UserInterface extends JFrame {
 			Font fontVal = new Font("Arial",Font.BOLD,15);
 			val.setFont(fontVal);
 			val.setBackground(Color.WHITE);
-			//De : x à : x
+			//De : x ï¿½ : x
 			JPanel periode = new JPanel();
 			periode.setLayout(new GridLayout(2,1));
 			

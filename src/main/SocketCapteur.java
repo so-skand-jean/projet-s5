@@ -8,7 +8,12 @@ import java.net.Socket;
 import java.util.Arrays;
 
 public class SocketCapteur {
-    public static void startServer(int port) {
+    UserInterface ui;
+    public SocketCapteur(UserInterface _ui) {
+        ui = _ui;
+    }
+
+    public void startServer(int port) {
         ServerSocket server;
 
         try {
