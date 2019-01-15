@@ -23,6 +23,37 @@ public class Logs{
 	private final int COLUMN_LOGS_NOM = 1;
 	private final int COLUMN_LOGS_DATE = 2;
 	private final int COLUMN_LOGS_VALEUR = 3;
+	
+	Connection con = null;
+	Statement stmt = null;
+	ResultSet rst = null;
+	PreparedStatement pstmt = null;
+	
+	public Logs() {
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/projetsoskandjean?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", "root", "");
+			
+		}catch(SQLException | ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	/**
+	 * fonction de déconnexion de la base de données
+	 */
+	public void deconnexionBDD() {
+		try {
+			con.close();
+			if(pstmt == null) {
+				stmt.close();
+				rst.close();
+			}else pstmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 			
 	
 	/**
@@ -31,15 +62,8 @@ public class Logs{
 	 * @return la valeur du capteur enregistré dans la base de donnée
 	 */
 	public double getCapteurValeur(Capteur c){
-		Connection con = null;
-		Statement stmt = null;
-		ResultSet rst = null;
 		double valeur = 0;
 		try {
-			
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/projetsoskandjean?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", "root", "");
-			
 			stmt = con.createStatement();
 			rst = stmt.executeQuery("SELECT * FROM Logs");
 			Date date = new java.sql.Timestamp(0);
@@ -50,19 +74,11 @@ public class Logs{
 					valeur = rst.getDouble(COLUMN_LOGS_VALEUR);	
 				}
 			}
-			
-		}catch(SQLException | ClassNotFoundException e) {
+		}catch(SQLException e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				con.close();
-				stmt.close();
-				rst.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			
 		}
+			
+		
 		
 		
 		return valeur;
@@ -75,15 +91,8 @@ public class Logs{
 	public TreeMap<String, Capteur> getAllCapteurs(){ 
 		
 		// TreeMap ===>>> nom capteur - capteur
-		
-		Connection con = null;
-		Statement stmt = null;
-		ResultSet rst = null;
 		TreeMap<String, Capteur> liste = new TreeMap<>();
 		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/projetsoskandjean?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", "root", "");
-			
 			stmt = con.createStatement();
 			rst = stmt.executeQuery("SELECT * FROM Capteur");
 			
@@ -109,19 +118,9 @@ public class Logs{
 				liste.put(nomC, x);
 			}
 			
-		}catch(SQLException | ClassNotFoundException e) {
+		}catch(SQLException e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				con.close();
-				stmt.close();
-				rst.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			
-		}
-		
+		} 		
 		return liste;
 	}
 	
@@ -135,13 +134,8 @@ public class Logs{
 	 * rajoute un capteur dans la base de donnée
 	 */
 	public void setNewCapteur(String nom, Ressources type, String batiment, int etage, String lieu) {
-		Connection con = null;
-		PreparedStatement pstmt = null;
 		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/projetsoskandjean?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", "root", "");
-			String INSERT_RECORD = "insert into capteur values(?, ?, ?, ?, ?, ?, ?, ?,  ?)";
-			pstmt = con.prepareStatement(INSERT_RECORD);
+			pstmt = con.prepareStatement("insert into capteur values(?, ?, ?, ?, ?, ?, ?, ?,  ?)");
 			Capteur c = new Capteur(nom, type, batiment, etage, lieu);
 			
 			Date date = new Date();
@@ -160,16 +154,8 @@ public class Logs{
 		    pstmt.executeUpdate();
 		    
 		    
-		}catch(SQLException | ClassNotFoundException e) {
+		}catch(SQLException e) {
 			e.printStackTrace();
-		}finally {
-			try {
-				con.close();
-				pstmt.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		    
 		}
 	}
 	
@@ -179,15 +165,7 @@ public class Logs{
 	 * met à jour les données d'un élément capteur en fonction des données dans la base de données
 	 */
 	public void updateCapteur(Capteur c) {
-		// le trouver dans la BDD et le modifier dans la base de donnee avec ses nouvelles informations
-		Connection con = null;
-		Statement stmt = null;
-		ResultSet rst = null;
 		try {
-			
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/projetsoskandjean?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", "root", "");
-			
 			stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			rst = stmt.executeQuery("SELECT * FROM Capteur");
 			String nomC;
@@ -219,16 +197,8 @@ public class Logs{
 			}
 			
 			
-		}catch(SQLException | ClassNotFoundException e) {
+		}catch(SQLException e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				con.close();
-				stmt.close();
-				rst.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
 		}
 		
 	}
@@ -252,14 +222,9 @@ public class Logs{
 	 */
 	public TreeMap<Date, Double> getCapteurValeurs(Capteur c, Date debut, Date fin){
 		TreeMap<Date, Double> t = new TreeMap<>();
-		Connection con = null;
-		Statement stmt = null;
-		ResultSet rst = null;
 		try {
 			Double valeur;
 			Date date;
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/projetsoskandjean?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", "root", "");
 			
 			stmt = con.createStatement();
 			rst = stmt.executeQuery("SELECT * FROM Logs");
@@ -272,19 +237,10 @@ public class Logs{
 					t.put(date,  valeur);
 				}
 			}
-		}catch(SQLException | ClassNotFoundException e) {
+		}catch(SQLException e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				con.close();
-				stmt.close();
-				rst.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
+		} 
 		
 		return t;
 	}
-	
 }
