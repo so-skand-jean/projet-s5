@@ -43,7 +43,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-public class UserInterface extends JFrame {
+public class UserInterface extends JFrame{
     private static final long serialVersionUID = 1L;
     private TreeMap<String, Capteur> mapCapteurs;
     private DefaultCategoryDataset dataChart = new DefaultCategoryDataset();
@@ -53,39 +53,8 @@ public class UserInterface extends JFrame {
     private ArrayList<JPanel> listeTemp = new ArrayList<>();
    
       
-      private Set<JPanel> listeAffiches = new TreeSet<>(
-    		  new Comparator() implements Comparable<String>{
-    		        public int compare(JPanel jpanel1, JPanel jpanel2){
-    		        	String bat1 = null;
-    		        	String bat2 = null;
-    		        	if(jpanel1.getClass() == PanelEau.class) {
-    		        		PanelEau j1 = (PanelEau) jpanel1;
-    		        		bat1 = j1.getBat();
-    		        	}else if(jpanel1.getClass() == PanelAir.class) {
-    		        		PanelAir j1 = (PanelAir) jpanel1;
-    		        		bat1 = j1.getBat();
-    		        	}else if(jpanel1.getClass() == PanelTemp.class) {
-    		        		PanelTemp j1 = (PanelTemp) jpanel1;
-    		        		bat1 = j1.getBat();
-    		        	}else if(jpanel1.getClass() == PanelElec.class) {
-    		        		PanelElec j1 = (PanelElec) jpanel1;
-    		        		bat1 = j1.getBat();
-    		        	}
-    		        	if(jpanel2.getClass() == PanelEau.class) {
-    		        		PanelEau j2 = (PanelEau) jpanel2;
-    		        		bat2 = j2.getBat();
-    		        	}else if(jpanel2.getClass() == PanelAir.class) {
-    		        		PanelAir j2 = (PanelAir) jpanel2;
-    		        		bat2 = j2.getBat();
-    		        	}else if(jpanel2.getClass() == PanelTemp.class) {
-    		        		PanelTemp j2 = (PanelTemp) jpanel2;
-    		        		bat2 = j2.getBat();
-    		        	}else if(jpanel2.getClass() == PanelElec.class) {
-    		        		PanelElec j2 = (PanelElec) jpanel2;
-    		        		bat2 = j2.getBat();
-    		        	}
-    		        	return bat1.compareTo(bat2);
-    		        }});
+      @SuppressWarnings("unchecked")
+	private Set<JPanel> listeAffiches = new TreeSet<>(new ComparatorPanel());
 
     // Pannel
     JPanel conteneurCapteurs = new JPanel();
@@ -177,7 +146,7 @@ public class UserInterface extends JFrame {
     	}
     }*/
     
-    private void addFiltre(ArrayList<JPanel> liste) {
+    private void addFiltre(Set<JPanel> liste) {
     	Iterator<JPanel> it = liste.iterator();
     	while(it.hasNext()) {
     		conteneurCapteurs.add(it.next());
@@ -756,6 +725,40 @@ public class UserInterface extends JFrame {
         public String getBat() {
         	return batiment;
         }
+    }
+    
+    private class ComparatorPanel implements Comparator<JPanel>{
+    	public int compare(JPanel o1, JPanel o2) {
+			String bat1 = null;
+	        String bat2 = null;
+	        if(o1.getClass() == PanelEau.class) {
+	        	PanelEau j1 = (PanelEau) o1;
+	        	bat1 = j1.getBat();
+	        }else if(o1.getClass() == PanelAir.class) {
+	        	PanelAir j1 = (PanelAir) o1;
+	        	bat1 = j1.getBat();
+	        }else if(o1.getClass() == PanelTemp.class) {
+	        	PanelTemp j1 = (PanelTemp) o1;
+	        	bat1 = j1.getBat();
+	        }else if(o1.getClass() == PanelElec.class) {
+	        	PanelElec j1 = (PanelElec) o1;
+	        	bat1 = j1.getBat();
+	        }
+	        if(o2.getClass() == PanelEau.class) {
+	        	PanelEau j2 = (PanelEau) o2;
+	        	bat2 = j2.getBat();
+	        }else if(o2.getClass() == PanelAir.class) {
+	        	PanelAir j2 = (PanelAir) o2;
+	        	bat2 = j2.getBat();
+	        }else if(o2.getClass() == PanelTemp.class) {
+	        	PanelTemp j2 = (PanelTemp) o2;
+	        	bat2 = j2.getBat();
+	        }else if(o2.getClass() == PanelElec.class) {
+	        	PanelElec j2 = (PanelElec) o2;
+	        	bat2 = j2.getBat();
+	        }
+	        return bat1.compareTo(bat2);
+		}
     }
 
 }
