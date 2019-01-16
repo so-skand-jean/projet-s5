@@ -5,12 +5,15 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -280,15 +283,15 @@ public class UserInterface extends JFrame {
         // Fin filtrage
         fenetreCap.add(fenetreCapteurs, 0, 0);
 
-        // Debut Graph
+        // Graphique
 
         JFreeChart lineChart = ChartFactory.createLineChart("", "Temps", "Valeur", dataChart, PlotOrientation.VERTICAL,
                 false, false, false);
 
         ChartPanel chartPanel = new ChartPanel(lineChart);
-        fenetreCap.add(chartPanel, 0, 1);
+        fenetreCap.add(chartPanel);
 
-        setLayout(new BoxLayout(conteneurCapteurs, BoxLayout.Y_AXIS));
+        conteneurCapteurs.setLayout(new BoxLayout(conteneurCapteurs, BoxLayout.Y_AXIS));
         fenetreCapteurs.setViewportView(conteneurCapteurs);
 
         return fenetreCap;
@@ -320,7 +323,7 @@ public class UserInterface extends JFrame {
                 break;
             }
 
-            setLayout(new BoxLayout(newCapteur, BoxLayout.Y_AXIS));
+            newCapteur.setLayout(new BoxLayout(newCapteur, BoxLayout.Y_AXIS));
             // Nom - Batiment Etage
             JLabel nomloc = new JLabel(c.getNom() + " - " + c.getBatiment() + " Et." + c.getEtage());
             Font font1 = new Font("Arial", Font.ITALIC, 15);
@@ -336,7 +339,7 @@ public class UserInterface extends JFrame {
             val.setBackground(Color.WHITE);
             // De : x ? : x
             JPanel periode = new JPanel();
-            periode.setLayout(new GridLayout(2, 1));
+            periode.setLayout(new GridLayout(2,4));
 
             Date date = new Date();
             DateFormat dtfDate = new SimpleDateFormat("dd/MM/yyyy");
@@ -356,16 +359,31 @@ public class UserInterface extends JFrame {
             DocumentListener listenerDate = new DocumentListener() {
                 @Override
                 public void insertUpdate(DocumentEvent de) {
+                	try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
                     event(de);
                 }
 
                 @Override
                 public void removeUpdate(DocumentEvent de) {
+                	try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
                     event(de);
                 }
 
                 @Override
                 public void changedUpdate(DocumentEvent de) {
+                	try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
                     event(de);
                 }
 
@@ -412,8 +430,8 @@ public class UserInterface extends JFrame {
                     }
 
                     errorDate.setVisible(showornot);
-                    periode.revalidate();
-                    periode.repaint();
+                    //periode.revalidate();
+                    //periode.repaint();
                 }
             };
 
@@ -422,16 +440,31 @@ public class UserInterface extends JFrame {
             DocumentListener listenerTemps = new DocumentListener() {
                 @Override
                 public void insertUpdate(DocumentEvent de) {
-                    event(de);
+                	try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+                	event(de);
                 }
 
                 @Override
                 public void removeUpdate(DocumentEvent de) {
-                    event(de);
+                	try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+                	event(de);
                 }
 
                 @Override
                 public void changedUpdate(DocumentEvent de) {
+                	try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
                     event(de);
                 }
 
@@ -479,8 +512,8 @@ public class UserInterface extends JFrame {
                     }
 
                     errorDate.setVisible(showornot);
-                    periode.revalidate();
-                    periode.repaint();
+                    //periode.revalidate();
+                    //periode.repaint();
                 }
             };
 
@@ -507,11 +540,13 @@ public class UserInterface extends JFrame {
 
             // Seuils
 
-            JPanel seuils = new JPanel();
-
             ImageIcon image = new ImageIcon("warning.png");
-            JLabel warning = new JLabel("Le capteur est hors seuil ", image, JLabel.LEFT);
-            seuils.add(warning);
+            Image img = image.getImage();
+            BufferedImage bi = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+            Graphics g = bi.createGraphics();
+            g.drawImage(img, 0, 0, 20, 20, null);
+            ImageIcon newimage = new ImageIcon(bi);
+            JLabel warning = new JLabel("Le capteur est hors seuil ", newimage, JLabel.LEFT);
 
             JLabel seuilMin = new JLabel("Min :");
             JLabel seuilMax = new JLabel("Max :");
@@ -519,13 +554,13 @@ public class UserInterface extends JFrame {
             JTextField max = new JTextField(Double.toString(c.getSeuilMax()));
 
             JPanel sud = new JPanel();
-            sud.setLayout(new GridLayout(2, 1));
+            sud.setLayout(new GridLayout(4,2));
             sud.add(seuilMin);
             sud.add(min);
             sud.add(seuilMax);
             sud.add(max);
             sud.add(warning);
-
+            warning.setVisible(false);
             DocumentListener listenerMin = new DocumentListener() {
                 @Override
                 public void insertUpdate(DocumentEvent de) {
@@ -543,18 +578,23 @@ public class UserInterface extends JFrame {
                 }
 
                 private void event(DocumentEvent de) {
-                    boolean error = false;
+                	boolean error = false;
 
                     if (Double.parseDouble(de.toString()) > c.getValeurCourante()) {
                         error = true;
                     }
                     warning.setText(warning.getText() + " (valeur trop petite)");
-                    seuils.setVisible(error);
-                    seuils.revalidate();
-                    seuils.repaint();
+                    warning.setVisible(error);
+                    sud.revalidate();
+                    sud.repaint();
+                    try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
                 }
             };
-
+            
             DocumentListener listenerMax = new DocumentListener() {
                 @Override
                 public void insertUpdate(DocumentEvent de) {
@@ -578,9 +618,9 @@ public class UserInterface extends JFrame {
                         error = true;
                     }
                     warning.setText(warning.getText() + " (valeur trop grande)");
-                    seuils.setVisible(error);
-                    seuils.revalidate();
-                    seuils.repaint();
+                    sud.setVisible(error);
+                    sud.revalidate();
+                    sud.repaint();
                 }
 
             };
@@ -588,8 +628,7 @@ public class UserInterface extends JFrame {
             min.getDocument().addDocumentListener(listenerMin);
             max.getDocument().addDocumentListener(listenerMax);
 
-            newCapteur.add(sud, BorderLayout.SOUTH);
-
+            newCapteur.add(sud);
             conteneurCapteurs.add(newCapteur);
             conteneurCapteurs.revalidate();
             conteneurCapteurs.repaint();
@@ -630,7 +669,7 @@ public class UserInterface extends JFrame {
             } else {
                 // input is not an int
                 porttf.setText("8952");
-                JOptionPane.showMessageDialog(null, "Attention, le num�ro de port fourni doit �tre un entier");
+                JOptionPane.showMessageDialog(null, "Attention, le numero de port fourni doit etre un entier");
             }
         });
 
