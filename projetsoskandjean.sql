@@ -19,10 +19,10 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de données :  projetsoskandjean
+-- Base de données :  solange_jean_skander_projets5
 --
-CREATE DATABASE IF NOT EXISTS projetsoskandjean DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
-USE projetsoskandjean;
+CREATE DATABASE IF NOT EXISTS solange_jean_skander_projets5 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+USE solange_jean_skander_projets5;
 
 -- --------------------------------------------------------
 
@@ -48,7 +48,7 @@ CREATE TABLE capteur (
 -- Structure de la table `logs`
 --
 
-CREATE TABLE `logs` (
+CREATE TABLE logs (
   log_cpt_nom varchar(50) COLLATE utf8mb4_bin NOT NULL,
   log_datetime timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   log_valeur double NOT NULL

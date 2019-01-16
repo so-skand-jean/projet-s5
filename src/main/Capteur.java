@@ -1,31 +1,27 @@
 package main;
 
-public class Capteur{
+import java.util.Date;
+
+public class Capteur {
     private String nom;
-    private Ressources type;
+    private TypeCapteur type;
     private String batiment;
     private int etage;
-    private String lieu;
+    private String infoLieu;
+
+    private String surnom;
     private double seuilMin;
     private double seuilMax;
-    private double valeur;
+    private double valeurCourante;
+    private Date dateDeDepassement;
     private boolean estConnecte;
 
-    /**
-     * @param nom
-     * @param type
-     * @param batiment
-     * @param etage
-     * @param lieu
-     */
-    public Capteur(String nom, Ressources type, String batiment, int etage, String lieu) {
-        this.nom = nom;
-        this.type = type;
-        this.batiment = batiment;
-        this.etage = etage;
-        this.lieu = lieu;
-        this.estConnecte = false;
+    public Capteur() {
+        // do nothing
+    }
 
+    public Capteur(String nom, TypeCapteur type, String batiment, int etage, String infoLieu) {
+        // update seuilMin et seuilMax
         switch (type) {
         case EAU:
             seuilMin = 0;
@@ -44,136 +40,116 @@ public class Capteur{
             seuilMax = 22;
             break;
         }
+        valeurCourante = 0;
+        estConnecte = false;
+        hydrate(nom, nom, type, batiment, etage, infoLieu, seuilMin, seuilMax, null);
     }
-    /**
-     * 
-     * @return nom
-     */
-    
+
+    public void hydrate(String nom, String surnom, TypeCapteur type, String batiment, int etage, String infoLieu,
+            double seuilMin, double seuilMax, Date dateDeDepassement) {
+        this.nom = nom;
+        this.surnom = surnom;
+        this.type = type;
+        this.batiment = batiment;
+        this.etage = etage;
+        this.infoLieu = infoLieu;
+        this.surnom = surnom;
+        this.seuilMin = seuilMin;
+        this.seuilMax = seuilMax;
+        this.dateDeDepassement = dateDeDepassement;
+    }
+
     public String getNom() {
-		return nom;
-	}
-	
+        return nom;
+    }
+
+    public TypeCapteur getType() {
+        return type;
+    }
+
+    public String getBatiment() {
+        return batiment;
+    }
+
+    public int getEtage() {
+        return etage;
+    }
+
+    public String getInfoLieu() {
+        return infoLieu;
+    }
+
+    public String getSurnom() {
+        return surnom;
+    }
+
+    public double getSeuilMin() {
+        return seuilMin;
+    }
+
+    public double getSeuilMax() {
+        return seuilMax;
+    }
+
+    public double getValeurCourante() {
+        return valeurCourante;
+    }
+
+    public boolean isConnected() {
+        return estConnecte;
+    }
+
+    public Date getDateDeDepassement() {
+        return dateDeDepassement;
+    }
+
+    public void updateSurnom(DBUtility db, String surnom) {
+        db.updateSurnomCptInDB(nom, surnom);
+        this.surnom = surnom;
+    }
+
+    public void updateSeuilMin(DBUtility db, double seuilMin) {
+        db.updateSeuilMinCptInDB(nom, seuilMin);
+        this.seuilMin = seuilMin;
+    }
+
+    public void updateSeuilMax(DBUtility db, double seuilMax) {
+        db.updateSeuilMaxCptInDB(nom, seuilMax);
+        this.seuilMax = seuilMax;
+    }
+
+    public void updateValeurCourante(DBUtility db, Date datetime, double currVal) {
+        db.updateValeurCouranteCptInDB(nom, datetime, currVal, (currVal < seuilMin || currVal > seuilMax));
+        this.dateDeDepassement = datetime;
+        this.valeurCourante = currVal;
+    }
+
+    public void setEstConnecte(boolean estConnecte) {
+        this.estConnecte = estConnecte;
+    }
+
     /**
-     * 
-     * @return type
+     * @return le hashcode de l'�l�ment capteur
      */
-	public Ressources getType() {
-		return type;
-	}
-	
-	/**
-	 * 
-	 * @return batiment
-	 */
-	public String getBatiment() {
-		return batiment;
-	}
-	
-	/**
-	 * 
-	 * @return etage
-	 */
-	public int getEtage() {
-		return etage;
-	}
-	
-	/**
-	 * 
-	 * @return seuil minimum
-	 */
-	public double getSeuilMin() {
-		return seuilMin;
-	}
-	
-	/**
-	 * 
-	 * @return seuil maximum
-	 */
-	public double getSeuilMax() {
-		return seuilMax;
-	}
-	
-	/**
-	 * 
-	 * @return valeur si capteur connecté et si il y a une valeur, 0 sinon
-	 */
-	public double getValeur() {
-		if(!estConnecte) return 0;
-		else return valeur;
-	}
-	
-	/**
-	 * 
-	 * @return lieu
-	 */
-	public String getLieu() {
-		return lieu;
-	}
-	
-	/**
-	 * 
-	 * @return si le capteur est connecté
-	 */
-	public boolean getEstConnecte() {
-		return estConnecte;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((nom == null) ? 0 : nom.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        return result;
+    }
 
-	/**
-	 * 
-	 * @param seuilMin
-	 */
-	public void setSeuilMin(double seuilMin) {
-		this.seuilMin = seuilMin;
-	}
-	
-	/**
-	 * 
-	 * @param seuilMax
-	 */
-	public void setSeuilMax(double seuilMax) {
-		this.seuilMax = seuilMax;
-	}
-	
-	/**
-	 * 
-	 * @return si la valeur est une valeur autorisé
-	 */
-	public boolean estHorsSeuil() {
-		return ((valeur>seuilMax) || (valeur<seuilMin));
-	}
-	
-	/**
-	 * 
-	 * @param l
-	 * recherche la valeur du capteur dan sla base de donnée et l'affecte à la variable capteur
-	 */
-	public void updateCapteurFromDB(Logs l) {
-		valeur = l.getCapteurValeur(this);
-	}
-
-	/**
-	 * @return le hashcode de l'élément capteur
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((nom == null) ? 0 : nom.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		return result;
-	}
-
-	/**
-	 * @param obj
-	 * @return renvoie si les éléments sont égaux ou non
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if(obj instanceof Capteur) {
-			Capteur capteur = (Capteur) obj;
-			return ((capteur.getNom() == nom) && (capteur.getType() == type));
-		}
-		return false;
-	}
+    /**
+     * @param obj
+     * @return renvoie si les �l�ments sont �gaux ou non
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Capteur) {
+            Capteur capteur = (Capteur) obj;
+            return ((capteur.getNom() == nom) && (capteur.getType() == type));
+        }
+        return false;
+    }
 }

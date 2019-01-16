@@ -1,5 +1,5 @@
 package main;
 
-public enum Ressources {
+public enum TypeCapteur {
     EAU, ELECTRICITE, AIRCOMPRIME, TEMPERATURE
 }
