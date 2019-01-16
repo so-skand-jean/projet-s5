@@ -19,12 +19,21 @@ public class SocketManager {
         db = _db;
     }
 
+    public static void oldMain(String[] args) {
+        SocketManager sm = new SocketManager();
+        DBUtility db = new DBUtility();
+        UserInterface ui = new UserInterface(sm, db);
+        sm.ui = ui;
+        sm.db = db;
+        sm.startServer(8952);
+    }
+
     public void startServer(int port) {
         ServerSocket server;
 
         try {
             server = new ServerSocket(port);
-            System.out.println("Le serveur ecoute le port " + server.getLocalPort());
+            System.out.println("Le serveur écoute le port " + server.getLocalPort());
 
             act = new AccepterClients(db, ui, server);
             actThread = new Thread(act);
@@ -39,7 +48,6 @@ public class SocketManager {
             act.stop();
             actThread.join();
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -116,7 +124,6 @@ public class SocketManager {
                 readMsg.stop();
                 readMsgThread.join();
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -125,7 +132,7 @@ public class SocketManager {
             while (shouldKeepListening) {
                 try {
                     readMsg = new LireMsg(db, ui, socketserver.accept());
-                    readMsgThread = new Thread();
+                    readMsgThread = new Thread(readMsg);
                     readMsgThread.start(); // traiter les messages du socket
                 } catch (IOException e) {
                     e.printStackTrace();

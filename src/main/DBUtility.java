@@ -14,6 +14,7 @@ import java.sql.Types;
 public class DBUtility {
     private TreeMap<String, Capteur> allCapteurs = new TreeMap<>();
     private Connection con;
+    private UserInterface ui;
 
     public DBUtility() {
         try {
@@ -77,9 +78,9 @@ public class DBUtility {
 
                     localCpt.getSeuilMin(), localCpt.getSeuilMax(), localCpt.getDateDeDepassement());
             queryWithNoReturn(
-                    "UPDATE capteur SET cpt_nom = ?, cpt_surnom = ?, cpt_type = ?, cpt_batiment = ?, cpt_etage = ?, cpt_info_lieu = ?, cpt_seuil_min = ?, cpt_seuil_max = ?, cpt_date_depassement = ?",
-                    cpt.getNom(), cpt.getSurnom(), cpt.getType(), cpt.getBatiment(), cpt.getEtage(), cpt.getInfoLieu(),
-                    cpt.getSeuilMin(), cpt.getSeuilMax(), cpt.getDateDeDepassement());
+                    "UPDATE capteur SET cpt_surnom = ?, cpt_type = ?, cpt_batiment = ?, cpt_etage = ?, cpt_info_lieu = ?, cpt_seuil_min = ?, cpt_seuil_max = ?, cpt_date_depassement = ? WHERE cpt_nom = ?",
+                    cpt.getSurnom(), cpt.getType(), cpt.getBatiment(), cpt.getEtage(), cpt.getInfoLieu(),
+                    cpt.getSeuilMin(), cpt.getSeuilMax(), cpt.getDateDeDepassement(), cpt.getNom());
         }
         cpt.setEstConnecte(this, ui, true);
     }
@@ -129,12 +130,13 @@ public class DBUtility {
             s.execute();
             s.close();
         } catch (SQLException e) {
+            System.err.println(query + "\n" + Arrays.toString(args));
             e.printStackTrace();
         }
     }
 
     private void updateCptFieldInDB(String cptNom, String fieldName, Object fieldValue) {
-        queryWithNoReturn("UPDATE capteur SET ? = ? WHERE cpt_nom = ?", cptNom, fieldName, fieldValue);
+        queryWithNoReturn("UPDATE capteur SET " + fieldName + " = ? WHERE cpt_nom = ?", fieldValue, cptNom);
     }
 
     public void updateSeuilMaxCptInDB(String cptNom, double seuilMax) {

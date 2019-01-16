@@ -43,31 +43,33 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-public class UserInterface extends JFrame{
+public class UserInterface extends JFrame {
     private static final long serialVersionUID = 1L;
-    private TreeMap<String, Capteur> mapCapteurs;
+    private TreeMap<String, Capteur> mapCapteurs = new TreeMap<>();
     private DefaultCategoryDataset dataChart = new DefaultCategoryDataset();
     private ArrayList<JPanel> listeEau = new ArrayList<>();
     private ArrayList<JPanel> listeElec = new ArrayList<>();
     private ArrayList<JPanel> listeAir = new ArrayList<>();
     private ArrayList<JPanel> listeTemp = new ArrayList<>();
-	private Set<JPanel> listeAffiches = new TreeSet<>(new ComparatorPanel());
+
+    @SuppressWarnings("unchecked")
+    private Set<JPanel> listeAffiches = new TreeSet<>(new ComparatorPanel());
 
     // Pannel
     JPanel conteneurCapteurs = new JPanel();
     JFrame ic = new JFrame();
     SocketManager sm;
-    DBUtility log;
+    DBUtility db;
 
     /**
      * @category Constructor
      */
 
-    public UserInterface(SocketManager s, DBUtility l) {
-        log = l;
+    public UserInterface(SocketManager s, DBUtility dbu) {
+        db = dbu;
         sm = s;
 
-        sm.addUIandDBUtility(this, log);
+        sm.addUIandDBUtility(this, db);
 
         ic.add(connecterPort());
         ic.pack();
@@ -77,12 +79,12 @@ public class UserInterface extends JFrame{
         ic.setLocationRelativeTo(null);
         ic.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         ic.addWindowListener(new WindowAdapter() {
-        	@Override
-        	public void windowClosing(WindowEvent event) {
-        		log.closeDBConnection();
-        		ic.dispose();
-        		System.exit(0);
-        	}
+            @Override
+            public void windowClosing(WindowEvent event) {
+                db.closeDBConnection();
+                ic.dispose();
+                System.exit(0);
+            }
         });
         ic.setVisible(true);
     }
@@ -90,69 +92,36 @@ public class UserInterface extends JFrame{
     public static void main(String[] args) {
         new UserInterface(new SocketManager(), new DBUtility());
     }
-    
-   /* private void addFiltreBatiment(ArrayList<JPanel> liste, String batVoulu) {
-    	Iterator<JPanel> it = liste.iterator();
-    	if(it.hasNext()) {
-    		JPanel j = it.next();
-    		if(j.getClass() == PanelEau.class) {
-    			PanelEau i = (PanelEau) j;
-    			if(i.getBat() == batVoulu) {
-    				conteneurCapteurs.add(j);
-    			}
-    			while(it.hasNext()) {
-    				i = (PanelEau) it.next();
-    				if(i.getBat() == batVoulu) {
-    					conteneurCapteurs.add(j);
-    				}
-    			}
-    		} else if(j.getClass() == PanelElec.class) {
-        		PanelElec i = (PanelElec) j;
-        		if(i.getBat() == batVoulu) {
-        			conteneurCapteurs.add(j);
-        		}
-        		while(it.hasNext()) {
-        			i = (PanelElec) it.next();
-        			if(i.getBat() == batVoulu) {
-            			conteneurCapteurs.add(j);
-            		}
-        		}
-    		} else if(j.getClass() == PanelTemp.class) {
-        		PanelTemp i = (PanelTemp) j;
-        		if(i.getBat() == batVoulu) {
-        			conteneurCapteurs.add(j);
-        		}
-        		while(it.hasNext()) {
-        			i = (PanelTemp) it.next();
-        			if(i.getBat() == batVoulu) {
-            			conteneurCapteurs.add(j);
-            		}
-        		}
-    		} else if(j.getClass() == PanelAir.class) {
-        		PanelAir i = (PanelAir) j;
-        		if(i.getBat() == batVoulu) {
-        			conteneurCapteurs.add(j);
-        		}
-        		while(it.hasNext()) {
-        			i = (PanelAir) it.next();
-        			if(i.getBat() == batVoulu) {
-            			conteneurCapteurs.add(j);
-            		}
-        		}
-    		}
-    	}
-    }*/
-    
+
+    /*
+     * private void addFiltreBatiment(ArrayList<JPanel> liste, String batVoulu) {
+     * Iterator<JPanel> it = liste.iterator(); if(it.hasNext()) { JPanel j =
+     * it.next(); if(j.getClass() == PanelEau.class) { PanelEau i = (PanelEau) j;
+     * if(i.getBat() == batVoulu) { conteneurCapteurs.add(j); } while(it.hasNext())
+     * { i = (PanelEau) it.next(); if(i.getBat() == batVoulu) {
+     * conteneurCapteurs.add(j); } } } else if(j.getClass() == PanelElec.class) {
+     * PanelElec i = (PanelElec) j; if(i.getBat() == batVoulu) {
+     * conteneurCapteurs.add(j); } while(it.hasNext()) { i = (PanelElec) it.next();
+     * if(i.getBat() == batVoulu) { conteneurCapteurs.add(j); } } } else
+     * if(j.getClass() == PanelTemp.class) { PanelTemp i = (PanelTemp) j;
+     * if(i.getBat() == batVoulu) { conteneurCapteurs.add(j); } while(it.hasNext())
+     * { i = (PanelTemp) it.next(); if(i.getBat() == batVoulu) {
+     * conteneurCapteurs.add(j); } } } else if(j.getClass() == PanelAir.class) {
+     * PanelAir i = (PanelAir) j; if(i.getBat() == batVoulu) {
+     * conteneurCapteurs.add(j); } while(it.hasNext()) { i = (PanelAir) it.next();
+     * if(i.getBat() == batVoulu) { conteneurCapteurs.add(j); } } } } }
+     */
+
     private void addFiltre(Set<JPanel> liste) {
-    	Iterator<JPanel> it = liste.iterator();
-    	while(it.hasNext()) {
-    		conteneurCapteurs.add(it.next());
-    	}
+        Iterator<JPanel> it = liste.iterator();
+        while (it.hasNext()) {
+            conteneurCapteurs.add(it.next());
+        }
     }
 
     /**
-     * Cette fonction permet de cr?er l'?cran de visualisation des capteurs et du 
-     *  raphique, la fenetre est la valeur retourn?e.
+     * Cette fonction permet de cr?er l'?cran de visualisation des capteurs et du
+     * raphique, la fenetre est la valeur retourn?e.
      * 
      * @return JPanel
      */
@@ -176,7 +145,7 @@ public class UserInterface extends JFrame{
         filtrage.add(lblCapteurs);
 
         JLabel nbCapteurs = new JLabel("");
-        nbCapteurs.setText(String.valueOf(listeAir.size()+listeEau.size()+listeTemp.size()+listeElec.size()));
+        nbCapteurs.setText(String.valueOf(listeAir.size() + listeEau.size() + listeTemp.size() + listeElec.size()));
         filtrage.add(nbCapteurs, BorderLayout.WEST);
 
         JPanel infoEtFiltrage = new JPanel();
@@ -188,28 +157,27 @@ public class UserInterface extends JFrame{
         JCheckBox cbEau = new JCheckBox("Eau");
         cbEau.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
-                /*addFiltreBatiment(listeEau, "U1");
-                addFiltreBatiment(listeEau, "U2");
-                addFiltreBatiment(listeEau, "U3");*/
-            	listeAffiches.addAll(listeEau);
-            	conteneurCapteurs.removeAll();
-            	addFiltre(listeAffiches);
-            	conteneurCapteurs.revalidate();
+                /*
+                 * addFiltreBatiment(listeEau, "U1"); addFiltreBatiment(listeEau, "U2");
+                 * addFiltreBatiment(listeEau, "U3");
+                 */
+                listeAffiches.addAll(listeEau);
+                conteneurCapteurs.removeAll();
+                addFiltre(listeAffiches);
+                conteneurCapteurs.revalidate();
                 conteneurCapteurs.repaint();
             } else {
                 Component[] comp = conteneurCapteurs.getComponents();
-                /*for (int i = 0; i < comp.length; i++) {
-                if (comp[i].getClass() == PanelEau.class) {
-                    conteneurCapteurs.remove(comp[i]);
-                    conteneurCapteurs.revalidate();
-                    conteneurCapteurs.repaint();
-                }
-            	}*/
+                /*
+                 * for (int i = 0; i < comp.length; i++) { if (comp[i].getClass() ==
+                 * PanelEau.class) { conteneurCapteurs.remove(comp[i]);
+                 * conteneurCapteurs.revalidate(); conteneurCapteurs.repaint(); } }
+                 */
                 conteneurCapteurs.removeAll();
-	            listeAffiches.removeAll(listeElec);
-	            addFiltre(listeAffiches);
-	            conteneurCapteurs.revalidate();
-	            conteneurCapteurs.repaint();
+                listeAffiches.removeAll(listeElec);
+                addFiltre(listeAffiches);
+                conteneurCapteurs.revalidate();
+                conteneurCapteurs.repaint();
             }
         });
 
@@ -220,23 +188,22 @@ public class UserInterface extends JFrame{
         cbElectricite.addItemListener(e -> {
 
             if (e.getStateChange() == ItemEvent.SELECTED) {
-            	/*addFiltreBatiment(listeElec, "U1");
-                addFiltreBatiment(listeElec, "U2");
-                addFiltreBatiment(listeElec, "U3");*/
+                /*
+                 * addFiltreBatiment(listeElec, "U1"); addFiltreBatiment(listeElec, "U2");
+                 * addFiltreBatiment(listeElec, "U3");
+                 */
                 listeAffiches.addAll(listeElec);
-            	conteneurCapteurs.removeAll();
-            	addFiltre(listeAffiches);
-            	conteneurCapteurs.revalidate();
+                conteneurCapteurs.removeAll();
+                addFiltre(listeAffiches);
+                conteneurCapteurs.revalidate();
                 conteneurCapteurs.repaint();
             } else {
                 Component[] comp = conteneurCapteurs.getComponents();
-                /*for (int i = 0; i < comp.length; i++) {
-                    if (comp[i].getClass() == PanelElec.class) {
-                        conteneurCapteurs.remove(comp[i]);
-                        conteneurCapteurs.revalidate();
-                        conteneurCapteurs.repaint();
-                    }
-                }*/
+                /*
+                 * for (int i = 0; i < comp.length; i++) { if (comp[i].getClass() ==
+                 * PanelElec.class) { conteneurCapteurs.remove(comp[i]);
+                 * conteneurCapteurs.revalidate(); conteneurCapteurs.repaint(); } }
+                 */
                 conteneurCapteurs.removeAll();
                 listeAffiches.removeAll(listeElec);
                 addFiltre(listeAffiches);
@@ -252,23 +219,22 @@ public class UserInterface extends JFrame{
         cbTemperature.addItemListener(e -> {
 
             if (e.getStateChange() == ItemEvent.SELECTED) {
-            	/*addFiltreBatiment(listeTemp, "U1");
-                addFiltreBatiment(listeTemp, "U2");
-                addFiltreBatiment(listeTemp, "U3");*/
-            	listeAffiches.addAll(listeTemp);
-            	conteneurCapteurs.removeAll();
-            	addFiltre(listeAffiches);
-            	conteneurCapteurs.revalidate();
+                /*
+                 * addFiltreBatiment(listeTemp, "U1"); addFiltreBatiment(listeTemp, "U2");
+                 * addFiltreBatiment(listeTemp, "U3");
+                 */
+                listeAffiches.addAll(listeTemp);
+                conteneurCapteurs.removeAll();
+                addFiltre(listeAffiches);
+                conteneurCapteurs.revalidate();
                 conteneurCapteurs.repaint();
             } else {
                 Component[] comp = conteneurCapteurs.getComponents();
-                /*for (int i = 0; i < comp.length; i++) {
-                    if (comp[i].getClass() == PanelTemp.class) {
-                        conteneurCapteurs.remove(comp[i]);
-                        conteneurCapteurs.revalidate();
-                        conteneurCapteurs.repaint();
-                    }
-                }*/
+                /*
+                 * for (int i = 0; i < comp.length; i++) { if (comp[i].getClass() ==
+                 * PanelTemp.class) { conteneurCapteurs.remove(comp[i]);
+                 * conteneurCapteurs.revalidate(); conteneurCapteurs.repaint(); } }
+                 */
                 conteneurCapteurs.removeAll();
                 listeAffiches.removeAll(listeTemp);
                 addFiltre(listeAffiches);
@@ -284,23 +250,22 @@ public class UserInterface extends JFrame{
         cbAir.addItemListener(e -> {
 
             if (e.getStateChange() == ItemEvent.SELECTED) {
-            	/*addFiltreBatiment(listeAir, "U1");
-                addFiltreBatiment(listeAir, "U2");
-                addFiltreBatiment(listeAir, "U3");*/
-            	listeAffiches.addAll(listeTemp);
-            	conteneurCapteurs.removeAll();
-            	addFiltre(listeAffiches);
-            	conteneurCapteurs.revalidate();
+                /*
+                 * addFiltreBatiment(listeAir, "U1"); addFiltreBatiment(listeAir, "U2");
+                 * addFiltreBatiment(listeAir, "U3");
+                 */
+                listeAffiches.addAll(listeTemp);
+                conteneurCapteurs.removeAll();
+                addFiltre(listeAffiches);
+                conteneurCapteurs.revalidate();
                 conteneurCapteurs.repaint();
             } else {
                 Component[] comp = conteneurCapteurs.getComponents();
-                /*for (int i = 0; i < comp.length; i++) {
-                    if (comp[i].getClass() == PanelAir.class) {
-                        conteneurCapteurs.remove(comp[i]);
-                        conteneurCapteurs.revalidate();
-                        conteneurCapteurs.repaint();
-                    }
-                }*/
+                /*
+                 * for (int i = 0; i < comp.length; i++) { if (comp[i].getClass() ==
+                 * PanelAir.class) { conteneurCapteurs.remove(comp[i]);
+                 * conteneurCapteurs.revalidate(); conteneurCapteurs.repaint(); } }
+                 */
                 conteneurCapteurs.removeAll();
                 listeAffiches.removeAll(listeAir);
                 addFiltre(listeAffiches);
@@ -311,7 +276,7 @@ public class UserInterface extends JFrame{
         });
         cbAir.setSelected(true);
         infoEtFiltrage.add(cbAir);
-        
+
         // Fin filtrage
         fenetreCap.add(fenetreCapteurs, 0, 0);
 
@@ -328,7 +293,7 @@ public class UserInterface extends JFrame{
 
         return fenetreCap;
     }
-    
+
     public void handleDBUpdatedEvent(Capteur c) {
         // New
         if (!mapCapteurs.containsKey(c.getNom())) {
@@ -432,7 +397,7 @@ public class UserInterface extends JFrame{
                         }
 
                         dataChart.clear();
-                        TreeMap<Date, Double> logCapteur = log.getLogs(c, date1, date2);
+                        TreeMap<Date, Double> logCapteur = db.getLogs(c, date1, date2);
                         int elem = 1;
 
                         for (Map.Entry<Date, Double> e : logCapteur.entrySet()) {
@@ -498,9 +463,9 @@ public class UserInterface extends JFrame{
                         }
 
                         dataChart.clear();
-                        TreeMap<Date, Double> logCapteur = log.getLogs(c, date1, date2);
+                        TreeMap<Date, Double> logCapteur = db.getLogs(c, date1, date2);
                         int elem = 1;
-                       
+
                         for (Map.Entry<Date, Double> e : logCapteur.entrySet()) {
                             Date date = e.getKey();
                             double valeur = e.getValue();
@@ -544,8 +509,8 @@ public class UserInterface extends JFrame{
 
             JPanel seuils = new JPanel();
 
-            ImageIcon image = new ImageIcon("warning");
-            JLabel warning = new JLabel("Le capteur est hors seuil ", image, JLabel.WEST);
+            ImageIcon image = new ImageIcon("warning.png");
+            JLabel warning = new JLabel("Le capteur est hors seuil ", image, JLabel.LEFT);
             seuils.add(warning);
 
             JLabel seuilMin = new JLabel("Min :");
@@ -555,11 +520,11 @@ public class UserInterface extends JFrame{
 
             JPanel sud = new JPanel();
             sud.setLayout(new GridLayout(2, 1));
-            sud.add(seuilMin, 1, 1);
-            sud.add(min, 1, 1);
-            sud.add(seuilMax, 1, 1);
-            sud.add(max, 1, 1);
-            sud.add(warning, 2, 1);
+            sud.add(seuilMin);
+            sud.add(min);
+            sud.add(seuilMax);
+            sud.add(max);
+            sud.add(warning);
 
             DocumentListener listenerMin = new DocumentListener() {
                 @Override
@@ -654,7 +619,7 @@ public class UserInterface extends JFrame{
         JButton confirm = new JButton("Confirmer");
 
         confirm.addActionListener(e -> {
-            if (isInteger(porttf.getText())){
+            if (isInteger(porttf.getText())) {
                 sm.startServer(Integer.parseInt(porttf.getText()));
                 ic.remove(conteneurConnexion);
                 ic.add(fenetreCapteurs());
@@ -665,7 +630,7 @@ public class UserInterface extends JFrame{
             } else {
                 // input is not an int
                 porttf.setText("8952");
-                JOptionPane.showMessageDialog(null, "Attention, le numéro de port fourni doit être un entier");
+                JOptionPane.showMessageDialog(null, "Attention, le numï¿½ro de port fourni doit ï¿½tre un entier");
             }
         });
 
@@ -678,84 +643,88 @@ public class UserInterface extends JFrame{
     }
 
     private class PanelEau extends JPanel {
-    	private String batiment;
+        private String batiment;
+
         public PanelEau(String bat) {
             super();
             this.batiment = bat;
         }
-        
+
         public String getBat() {
-        	return batiment;
+            return batiment;
         }
     }
 
     private class PanelElec extends JPanel {
-    	private String batiment;
+        private String batiment;
+
         public PanelElec(String bat) {
-            super();this.batiment = bat;
+            super();
+            this.batiment = bat;
         }
-        
+
         public String getBat() {
-        	return batiment;
+            return batiment;
         }
     }
 
     private class PanelAir extends JPanel {
-    	private String batiment;
+        private String batiment;
+
         public PanelAir(String bat) {
             super();
             this.batiment = bat;
         }
-        
+
         public String getBat() {
-        	return batiment;
+            return batiment;
         }
     }
 
     private class PanelTemp extends JPanel {
-    	private String batiment;
+        private String batiment;
+
         public PanelTemp(String bat) {
             super();
             this.batiment = bat;
         }
-        
+
         public String getBat() {
-        	return batiment;
+            return batiment;
         }
     }
-    
-    private class ComparatorPanel implements Comparator<JPanel>{
-    	public int compare(JPanel o1, JPanel o2) {
-			String bat1 = null;
-	        String bat2 = null;
-	        if(o1.getClass() == PanelEau.class) {
-	        	PanelEau j1 = (PanelEau) o1;
-	        	bat1 = j1.getBat();
-	        }else if(o1.getClass() == PanelAir.class) {
-	        	PanelAir j1 = (PanelAir) o1;
-	        	bat1 = j1.getBat();
-	        }else if(o1.getClass() == PanelTemp.class) {
-	        	PanelTemp j1 = (PanelTemp) o1;
-	        	bat1 = j1.getBat();
-	        }else if(o1.getClass() == PanelElec.class) {
-	        	PanelElec j1 = (PanelElec) o1;
-	        	bat1 = j1.getBat();
-	        }
-	        if(o2.getClass() == PanelEau.class) {
-	        	PanelEau j2 = (PanelEau) o2;
-	        	bat2 = j2.getBat();
-	        }else if(o2.getClass() == PanelAir.class) {
-	        	PanelAir j2 = (PanelAir) o2;
-	        	bat2 = j2.getBat();
-	        }else if(o2.getClass() == PanelTemp.class) {
-	        	PanelTemp j2 = (PanelTemp) o2;
-	        	bat2 = j2.getBat();
-	        }else if(o2.getClass() == PanelElec.class) {
-	        	PanelElec j2 = (PanelElec) o2;
-	        	bat2 = j2.getBat();
-	        }
-	        return bat1.compareTo(bat2);
-		}
-    }
 
+    private class ComparatorPanel implements Comparator<JPanel> {
+        public int compare(JPanel o1, JPanel o2) {
+            String bat1 = null;
+            String bat2 = null;
+            if (o1.getClass() == PanelEau.class) {
+                PanelEau j1 = (PanelEau) o1;
+                bat1 = j1.getBat();
+            } else if (o1.getClass() == PanelAir.class) {
+                PanelAir j1 = (PanelAir) o1;
+                bat1 = j1.getBat();
+            } else if (o1.getClass() == PanelTemp.class) {
+                PanelTemp j1 = (PanelTemp) o1;
+                bat1 = j1.getBat();
+            } else if (o1.getClass() == PanelElec.class) {
+                PanelElec j1 = (PanelElec) o1;
+                bat1 = j1.getBat();
+            }
+            if (o2.getClass() == PanelEau.class) {
+                PanelEau j2 = (PanelEau) o2;
+                bat2 = j2.getBat();
+            } else if (o2.getClass() == PanelAir.class) {
+                PanelAir j2 = (PanelAir) o2;
+                bat2 = j2.getBat();
+            } else if (o2.getClass() == PanelTemp.class) {
+                PanelTemp j2 = (PanelTemp) o2;
+                bat2 = j2.getBat();
+            } else if (o2.getClass() == PanelElec.class) {
+                PanelElec j2 = (PanelElec) o2;
+                bat2 = j2.getBat();
+            }
+            return bat1.compareTo(bat2);
+        }
+    }
 }
