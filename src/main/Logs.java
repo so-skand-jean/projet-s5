@@ -46,10 +46,14 @@ public class Logs{
 	public void deconnexionBDD() {
 		try {
 			con.close();
-			if(pstmt == null) {
+			if(stmt != null) {
 				stmt.close();
 				rst.close();
-			}else pstmt.close();
+			}
+			if(pstmt != null){
+				pstmt.close();
+			}
+			System.out.println("Deconnecte de la BD");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
