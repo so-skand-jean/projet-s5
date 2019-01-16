@@ -7,6 +7,10 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,6 +48,10 @@ public class UserInterface extends JFrame {
 	private ArrayList<JPanel> listeAir = new ArrayList<>();
 	private ArrayList<JPanel> listeTemp = new ArrayList<>();
 	
+	static UserInterface ui;
+	static SocketCapteur sc;
+	
+	
 	//Pannel
 	JPanel conteneurCapteurs = new JPanel();
 	JFrame ic = new JFrame();
@@ -60,24 +68,31 @@ public class UserInterface extends JFrame {
 		
 		ic.add(connecterPort());
 		ic.pack();
-	    //DÃ©finit un titre pour notre fenÃªtre
+	    //Definit un titre pour notre fenetre
 	    ic.setTitle("Gestion de capteurs");
 	    //Positionnement au centre
 	    ic.setLocationRelativeTo(null);
-	    ic.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+	    ic.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+	    ic.addWindowListener(new WindowAdapter() {
+	        @Override
+	        public void windowClosing(WindowEvent event) {
+	        	log.deconnexionBDD();
+	        	ic.dispose();
+	            System.exit(0);
+	        }
+	    });
 	    ic.setVisible(true);       
 	}
 
 	public static void main(String[] args) {
-        UserInterface ui = new UserInterface();
-        SocketCapteur sc = new SocketCapteur(ui);
-        // méthode pour lancer l'écoute du serveur, port par défaut
-        sc.startServer(8952);
+        ui = new UserInterface();
+        sc = new SocketCapteur(ui);
+        // methode pour lancer l'ecoute du serveur, port par defaut
 	}
 	
 	
 	/**
-	 * Cette fonction permet de cr�er l'�cran de visualisation des capteurs et du graphique, la fenetre est la valeur retourn�e.
+	 * Cette fonction permet de creer l'ecran de visualisation des capteurs et du graphique, la fenetre est la valeur retournee.
 	 * @return JPanel
 	 */
 	public JPanel fenetreCapteurs() {
@@ -264,7 +279,7 @@ public class UserInterface extends JFrame {
 			Font fontVal = new Font("Arial",Font.BOLD,15);
 			val.setFont(fontVal);
 			val.setBackground(Color.WHITE);
-			//De : x � : x
+			//De : x a : x
 			JPanel periode = new JPanel();
 			periode.setLayout(new GridLayout(2,1));
 			
@@ -393,17 +408,14 @@ public class UserInterface extends JFrame {
 						}
 		    			
 		    			dataChart.clear();
-		    			TreeMap<Date,Capteur> logCapteur = new TreeMap<>();
+		    			TreeMap<Date,Double> logCapteur = log.getCapteurValeurs(c, date1, date2);
 		    			int elem = 1;
-		    			/*
-		    			 * ECRIRE ICI LE CODE QUI VA PIOCHER DANS LE LOG
-		    			 * 
-		    			 */
-		    			for(Map.Entry<Date,Capteur> e : logCapteur.entrySet()) {
+
+		    			for(Map.Entry<Date,Double> e : logCapteur.entrySet()) {
 		    				  Date date = e.getKey();
-		    				  Capteur capteur = e.getValue();
+		    				  Double valeur = e.getValue();
 		    				  if(date.after(date1)&&date.before(date2)) {
-		    					  dataChart.addValue(capteur.getValeur(), "R"+elem, "Valeur");
+		    					  dataChart.addValue(valeur, "R"+elem, "Valeur");
 			    				  dataChart.addValue(date.getTime()/1000, "R"+elem, "Date");
 		    				  }
 		    				  elem++;
@@ -430,18 +442,6 @@ public class UserInterface extends JFrame {
 			periode.add(aTF,1,0);
 			periode.add(aTemps,1,0);
 			
-			//Action -> Graph
-			/*newCapteur.addMouseListener(new MouseAdapter() {
-
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    dataChart.clear();
-                    while(logs.getValeurs(c,)) {
-                    	dataChart.addValue(c.getValeur(), "R1", "C1");
-                    }
-                }
-
-            });*/
 			//
 			newCapteur.add(nomloc,BorderLayout.WEST);
 			newCapteur.add(ressconn,BorderLayout.WEST);
@@ -552,10 +552,11 @@ public class UserInterface extends JFrame {
 		
 		JPanel conteneurConnexion = new JPanel();
 		JLabel portDeConnexion = new JLabel("Port de connexion : ");
-		JTextField porttf = new JTextField("3306");
+		JTextField porttf = new JTextField("8952");
 		JButton confirm = new JButton("Confirmer");
 		
 		confirm.addActionListener(e -> { 
+	        						sc.startServer(Integer.parseInt(porttf.getText()));
 								    ic.remove(conteneurConnexion);
 								    ic.add(fenetreCapteurs());
 								    ic.revalidate();
