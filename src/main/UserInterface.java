@@ -51,9 +51,6 @@ public class UserInterface extends JFrame{
     private ArrayList<JPanel> listeElec = new ArrayList<>();
     private ArrayList<JPanel> listeAir = new ArrayList<>();
     private ArrayList<JPanel> listeTemp = new ArrayList<>();
-   
-      
-      @SuppressWarnings("unchecked")
 	private Set<JPanel> listeAffiches = new TreeSet<>(new ComparatorPanel());
 
     // Pannel
