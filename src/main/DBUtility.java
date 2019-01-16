@@ -4,20 +4,22 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.TreeMap;
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
+import java.sql.Types;
 
 public class DBUtility {
-    private TreeMap<String, Capteur> allCapteurs;
+    private TreeMap<String, Capteur> allCapteurs = new TreeMap<>();
     private Connection con;
 
     public DBUtility() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             con = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/solange_jean_skander_projets5?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC",
+                    "jdbc:mysql://localhost:3306/solange_jean_skander_projets5?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Paris",
                     "root", "");
             initAllCapteurs();
         } catch (SQLException | ClassNotFoundException e) {
@@ -59,13 +61,13 @@ public class DBUtility {
         return allCapteurs;
     }
 
-    public void handleNewCapteurFromSocketManager(Capteur cpt) {
+    public void handleNewCapteurFromSocketManager(UserInterface ui, Capteur cpt) {
         if (!allCapteurs.containsKey(cpt.getNom())) {
             // new capteur
             queryWithNoReturn(
-                    "INSERT INTO capteur (cpt_nom, cpt_surnom, cpt_type, cpt_batiment, cpt_etage, cpt_info_lieu, cpt_seuil_min, cpt_seuil_max, cpt_date_depassement) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO capteur (cpt_nom, cpt_surnom, cpt_type, cpt_batiment, cpt_etage, cpt_info_lieu, cpt_seuil_min, cpt_seuil_max) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                     cpt.getNom(), cpt.getSurnom(), cpt.getType(), cpt.getBatiment(), cpt.getEtage(), cpt.getInfoLieu(),
-                    cpt.getSeuilMin(), cpt.getSeuilMax(), cpt.getDateDeDepassement());
+                    cpt.getSeuilMin(), cpt.getSeuilMax());
             allCapteurs.put(cpt.getNom(), cpt); // overwrite the capteur in local treemap
         } else {
             Capteur localCpt = allCapteurs.get(cpt.getNom());
@@ -79,6 +81,7 @@ public class DBUtility {
                     cpt.getNom(), cpt.getSurnom(), cpt.getType(), cpt.getBatiment(), cpt.getEtage(), cpt.getInfoLieu(),
                     cpt.getSeuilMin(), cpt.getSeuilMax(), cpt.getDateDeDepassement());
         }
+        cpt.setEstConnecte(this, ui, true);
     }
 
     public TreeMap<Date, Double> getLogs(Capteur c, Date debut, Date fin) {
@@ -109,13 +112,20 @@ public class DBUtility {
             PreparedStatement s = con.prepareStatement(query);
             for (int i = 0; i < args.length; i++) {
                 if (args[i] instanceof String) {
-                    s.setString(i, (String) args[i]);
+                    s.setString(i + 1, (String) args[i]);
+                } else if (args[i] instanceof TypeCapteur) {
+                    s.setString(i + 1, ((TypeCapteur) args[i]).name());
                 } else if (args[i] instanceof Double) {
-                    s.setDouble(i, (Double) args[i]);
+                    s.setDouble(i + 1, (Double) args[i]);
+                } else if (args[i] instanceof Integer) {
+                    s.setInt(i + 1, (Integer) args[i]);
                 } else if (args[i] instanceof Date) {
-                    s.setTimestamp(i, new Timestamp(((Date) args[i]).getTime()));
+                    s.setTimestamp(i + 1, new Timestamp(((Date) args[i]).getTime()));
+                } else if (args[i] == null) {
+                    s.setNull(i + 1, Types.INTEGER);
                 }
             }
+
             s.execute();
             s.close();
         } catch (SQLException e) {
@@ -139,11 +149,17 @@ public class DBUtility {
         updateCptFieldInDB(cptNom, "cpt_surnom", surnom);
     }
 
-    public void updateValeurCouranteCptInDB(String cptNom, Date datetime, double valeurCourante, boolean isOffRange) {
+    public void updateValeurCouranteCptInDB(UserInterface ui, String cptNom, Date datetime, double valeurCourante, boolean isOffRange) {
         queryWithNoReturn("INSERT INTO logs (log_cpt_nom, log_datetime, log_valeur) VALUES(?, ?, ?)", cptNom, datetime,
                 valeurCourante);
         if (isOffRange) {
             updateCptFieldInDB(cptNom, "cpt_date_depassement", datetime);
         }
+        ui.handleDBUpdatedEvent(allCapteurs.get(cptNom));
+    }
+
+    public void updateUICapteur(UserInterface ui, Capteur cpt) {
+        allCapteurs.put(cpt.getNom(), cpt);
+        ui.handleDBUpdatedEvent(cpt);
     }
 }
