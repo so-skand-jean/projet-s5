@@ -10,5 +10,7 @@ Pour faire fonctionner l'application, il faut:
 
 
 Auteurs : Jean SORDES, Skander AGHILONE, Solange ROELANTS
-novembre 2018 - janvier 2019
+
+De novembre 2018 à janvier 2019
+
 https://github.com/so-skand-jean/projet-s5
