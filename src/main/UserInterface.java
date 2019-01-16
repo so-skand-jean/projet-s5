@@ -7,6 +7,10 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -67,7 +71,15 @@ public class UserInterface extends JFrame {
         ic.setTitle("Gestion de capteurs");
         // Positionnement au centre
         ic.setLocationRelativeTo(null);
-        ic.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        ic.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        ic.addWindowListener(new WindowAdapter() {
+        	@Override
+        	public void windowClosing(WindowEvent event) {
+        		log.closeDBConnection();
+        		ic.dispose();
+        		System.exit(0);
+        	}
+        });
         ic.setVisible(true);
     }
 
@@ -390,17 +402,14 @@ public class UserInterface extends JFrame {
                         }
 
                         dataChart.clear();
-                        TreeMap<Date, Capteur> logCapteur = new TreeMap<>();
+                        TreeMap<Date, Double> logCapteur = log.getLogs(c, date1, date2);
                         int elem = 1;
-                        /*
-                         * ECRIRE ICI LE CODE QUI VA PIOCHER DANS LE LOG
-                         * 
-                         */
-                        for (Map.Entry<Date, Capteur> e : logCapteur.entrySet()) {
+                       
+                        for (Map.Entry<Date, Double> e : logCapteur.entrySet()) {
                             Date date = e.getKey();
-                            Capteur capteur = e.getValue();
+                            double valeur = e.getValue();
                             if (date.after(date1) && date.before(date2)) {
-                                dataChart.addValue(capteur.getValeurCourante(), "R" + elem, "Valeur");
+                                dataChart.addValue(valeur, "R" + elem, "Valeur");
                                 dataChart.addValue(date.getTime() / 1000, "R" + elem, "Date");
                             }
                             elem++;
@@ -426,16 +435,6 @@ public class UserInterface extends JFrame {
             periode.add(aTF, 1, 0);
             periode.add(aTemps, 1, 0);
 
-            // Action -> Graph
-            /*
-             * newCapteur.addMouseListener(new MouseAdapter() {
-             * 
-             * @Override public void mousePressed(MouseEvent e) { dataChart.clear();
-             * while(logs.getValeurs(c,)) { dataChart.addValue(c.getValeur(), "R1", "C1"); }
-             * }
-             * 
-             * });
-             */
             //
             newCapteur.add(nomloc, BorderLayout.WEST);
             newCapteur.add(ressconn, BorderLayout.WEST);
