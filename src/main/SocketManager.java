@@ -16,6 +16,11 @@ public class SocketManager {
         db = _db;
     }
 
+    public static void main(String[] args) {
+        SocketManager sm = new SocketManager();
+        sm.startServer(8952);
+    }
+
     public void startServer(int port) {
         ServerSocket server;
 
@@ -40,15 +45,25 @@ public class SocketManager {
             BufferedReader in;
             String[] data = { "" };
 
-            Capteur cpt = new Capteur();
-            db.updateCapteurInDB(cpt);
+            Capteur cpt;
+            // db.updateCapteurInDB(cpt);
             while (!data[0].equals("Deconnexion")) {
                 try {
                     in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     data = in.readLine().split(" ");
+                    switch (data[0]) {
+                    case "Connexion":
+                        String[] newCptData = data[2].split(":");
+                        cpt = new Capteur(data[1], TypeCapteur.valueOf(newCptData[0]), newCptData[1], Integer.parseInt(newCptData[2]), newCptData[3]);
+                        db.syncCapteurWithDb(cpt);
+                        break;
+                    case "Donnee":
+                        break;
+                    default:
+                        System.err.println(Arrays.toString(data));
+                        break;
+                    }
                     System.out.println(Arrays.toString(data));
-                    // connexion()
-                    // donnees(data)
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -59,9 +74,9 @@ public class SocketManager {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            cpt.setEstConnecte(false);
-            db.updateCapteurInDB(cpt);
-            // deconnexion();
+            // cpt.setEstConnecte(false);
+            // db.updateCapteurInDB(cpt);
+            // deconnexion()
         }
     }
 

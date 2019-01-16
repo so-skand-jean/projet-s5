@@ -127,17 +127,4 @@ public class Capteur {
     public void setEstConnecte(boolean estConnecte) {
         this.estConnecte = estConnecte;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Capteur) {
-            Capteur cpt = (Capteur) obj;
-            return this.nom == cpt.nom && this.type == cpt.type && this.batiment == cpt.batiment
-                    && this.etage == cpt.etage && this.infoLieu == cpt.infoLieu && this.surnom == cpt.surnom
-                    && this.seuilMin == cpt.seuilMin && this.seuilMax == cpt.seuilMax
-                    && this.valeurCourante == cpt.valeurCourante && this.dateDeDepassement == cpt.dateDeDepassement
-                    && this.estConnecte == cpt.estConnecte;
-        }
-        return false;
-    }
 }
