@@ -128,27 +128,15 @@ public class Capteur {
         this.estConnecte = estConnecte;
     }
 
-    /**
-     * @return le hashcode de l'�l�ment capteur
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((nom == null) ? 0 : nom.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        return result;
-    }
-
-    /**
-     * @param obj
-     * @return renvoie si les �l�ments sont �gaux ou non
-     */
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Capteur) {
-            Capteur capteur = (Capteur) obj;
-            return ((capteur.getNom() == nom) && (capteur.getType() == type));
+            Capteur cpt = (Capteur) obj;
+            return this.nom == cpt.nom && this.type == cpt.type && this.batiment == cpt.batiment
+                    && this.etage == cpt.etage && this.infoLieu == cpt.infoLieu && this.surnom == cpt.surnom
+                    && this.seuilMin == cpt.seuilMin && this.seuilMax == cpt.seuilMax
+                    && this.valeurCourante == cpt.valeurCourante && this.dateDeDepassement == cpt.dateDeDepassement
+                    && this.estConnecte == cpt.estConnecte;
         }
         return false;
     }

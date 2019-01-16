@@ -9,11 +9,11 @@ import java.util.Arrays;
 
 public class SocketManager {
     UserInterface ui;
-    DBUtility log;
-    
-    public void addUIandDBUtility(UserInterface _ui, DBUtility _l){
+    DBUtility db;
+
+    public void addUIandDBUtility(UserInterface _ui, DBUtility _db) {
         ui = _ui;
-        log = _l;
+        db = _db;
     }
 
     public void startServer(int port) {
@@ -29,20 +29,6 @@ public class SocketManager {
         }
     }
 
-    /*
-     * public void connexion(String nomCapteur, String description){ }
-     * 
-     * public void donnee(String nomCapteur, double valeur){
-     * 
-     * @Skander Je voudrais avoir un tableau bidimensionnel comportant :
-     * nom,type,batiment,etage,lieu,delais,valeur du capteur }
-     * 
-     * public void deconnexion(String nomCapteur){ }
-     * 
-     * public void ecouter(){ }
-     * 
-     */
-
     private class LireMsg implements Runnable {
         private Socket socket;
 
@@ -54,12 +40,14 @@ public class SocketManager {
             BufferedReader in;
             String[] data = { "" };
 
-            // connexion()
+            Capteur cpt = new Capteur();
+            db.updateCapteurInDB(cpt);
             while (!data[0].equals("Deconnexion")) {
                 try {
                     in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     data = in.readLine().split(" ");
                     System.out.println(Arrays.toString(data));
+                    // connexion()
                     // donnees(data)
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -71,13 +59,14 @@ public class SocketManager {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            cpt.setEstConnecte(false);
+            db.updateCapteurInDB(cpt);
             // deconnexion();
         }
     }
 
     private class AccepterClients implements Runnable {
         private ServerSocket socketserver;
-        private Socket socket;
         private boolean shouldKeepListening = true;
 
         public AccepterClients(ServerSocket s) {
@@ -91,13 +80,11 @@ public class SocketManager {
         public void run() {
             while (shouldKeepListening) {
                 try {
-                    socket = socketserver.accept(); // Un client se connecte --> on l'accepte
-                    new Thread(new LireMsg(socket)).start(); // traiter les messages du socket
+                    new Thread(new LireMsg(socketserver.accept())).start(); // traiter les messages du socket
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
-
     }
 }

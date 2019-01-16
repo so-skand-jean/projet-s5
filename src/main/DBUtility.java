@@ -67,7 +67,7 @@ public class DBUtility {
                     cpt.getNom(), cpt.getSurnom(), cpt.getType(), cpt.getBatiment(), cpt.getEtage(), cpt.getInfoLieu(),
                     cpt.getSeuilMin(), cpt.getSeuilMax(), cpt.getDateDeDepassement());
             allCapteurs.put(cpt.getNom(), cpt); // overwrite the capteur in local treemap
-        } else {
+        } else if (cpt.equals(allCapteurs.get(cpt.getNom()))) {
             queryWithNoReturn(
                     "UPDATE capteur SET cpt_nom = ?, cpt_surnom = ?, cpt_type = ?, cpt_batiment = ?, cpt_etage = ?, cpt_info_lieu = ?, cpt_seuil_min = ?, cpt_seuil_max = ?, cpt_date_depassement = ?",
                     cpt.getNom(), cpt.getSurnom(), cpt.getType(), cpt.getBatiment(), cpt.getEtage(), cpt.getInfoLieu(),
