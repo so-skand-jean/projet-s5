@@ -118,13 +118,14 @@ public class Capteur {
         this.seuilMax = seuilMax;
     }
 
-    public void updateValeurCourante(DBUtility db, Date datetime, double currVal) {
-        db.updateValeurCouranteCptInDB(nom, datetime, currVal, (currVal < seuilMin || currVal > seuilMax));
+    public void updateValeurCourante(DBUtility db, UserInterface ui, Date datetime, double currVal) {
+        db.updateValeurCouranteCptInDB(ui, nom, datetime, currVal, (currVal < seuilMin || currVal > seuilMax));
         this.dateDeDepassement = datetime;
         this.valeurCourante = currVal;
     }
 
-    public void setEstConnecte(boolean estConnecte) {
+    public void setEstConnecte(DBUtility db, UserInterface ui, boolean estConnecte) {
         this.estConnecte = estConnecte;
+        db.updateUICapteur(ui, this);
     }
 }
