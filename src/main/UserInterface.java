@@ -68,7 +68,6 @@ public class UserInterface extends JFrame {
     /**
      * @category Constructor
      */
-
     public UserInterface(SocketManager s, DBUtility dbu) {
         db = dbu;
         sm = s;
@@ -339,7 +338,7 @@ public class UserInterface extends JFrame {
             val.setBackground(Color.WHITE);
             // De : x ? : x
             JPanel periode = new JPanel();
-            periode.setLayout(new GridLayout(2,4));
+            periode.setLayout(new GridLayout(2, 4));
 
             Date date = new Date();
             DateFormat dtfDate = new SimpleDateFormat("dd/MM/yyyy");
@@ -416,12 +415,12 @@ public class UserInterface extends JFrame {
 
                     errorDate.setVisible(showornot);
                     try {
-						Thread.sleep(5000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-                    //periode.revalidate();
-                    //periode.repaint();
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    // periode.revalidate();
+                    // periode.repaint();
                 }
             };
 
@@ -430,31 +429,31 @@ public class UserInterface extends JFrame {
             DocumentListener listenerTemps = new DocumentListener() {
                 @Override
                 public void insertUpdate(DocumentEvent de) {
-                	try {
-						Thread.sleep(5000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-                	event(de);
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    event(de);
                 }
 
                 @Override
                 public void removeUpdate(DocumentEvent de) {
-                	try {
-						Thread.sleep(5000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-                	event(de);
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    event(de);
                 }
 
                 @Override
                 public void changedUpdate(DocumentEvent de) {
-                	try {
-						Thread.sleep(5000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     event(de);
                 }
 
@@ -502,8 +501,8 @@ public class UserInterface extends JFrame {
                     }
 
                     errorDate.setVisible(showornot);
-                    //periode.revalidate();
-                    //periode.repaint();
+                    // periode.revalidate();
+                    // periode.repaint();
                 }
             };
 
@@ -569,7 +568,7 @@ public class UserInterface extends JFrame {
                 }
 
                 private void event(DocumentEvent de) {
-                	boolean error = false;
+                    boolean error = false;
 
                     if (Double.parseDouble(de.toString()) > c.getValeurCourante()) {
                         error = true;
@@ -577,13 +576,13 @@ public class UserInterface extends JFrame {
                     warning.setText(warning.getText() + " (valeur trop petite)");
                     warning.setVisible(error);
                     try {
-						Thread.sleep(5000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             };
-            
+
             DocumentListener listenerMax = new DocumentListener() {
                 @Override
                 public void insertUpdate(DocumentEvent de) {
@@ -615,9 +614,9 @@ public class UserInterface extends JFrame {
             min.getDocument().addDocumentListener(listenerMin);
             max.getDocument().addDocumentListener(listenerMax);
 
-            newCapteur.add(minPanel,Component.LEFT_ALIGNMENT);
-            newCapteur.add(maxPanel,Component.LEFT_ALIGNMENT);
-            newCapteur.add(warning,Component.LEFT_ALIGNMENT);
+            newCapteur.add(minPanel, Component.LEFT_ALIGNMENT);
+            newCapteur.add(maxPanel, Component.LEFT_ALIGNMENT);
+            newCapteur.add(warning, Component.LEFT_ALIGNMENT);
             conteneurCapteurs.add(newCapteur);
             fenetreCapteurs.revalidate();
             fenetreCapteurs.repaint();
@@ -655,6 +654,10 @@ public class UserInterface extends JFrame {
                 ic.repaint();
                 ic.setSize(800, 900);
                 ic.setLocationRelativeTo(null);
+                TreeMap<String, Capteur> allCpt = db.getAllCapteurs();
+                for (Map.Entry<String, Capteur> entry : allCpt.entrySet()) {
+                    handleDBUpdatedEvent(entry.getValue());
+                }
             } else {
                 // input is not an int
                 porttf.setText("8952");
