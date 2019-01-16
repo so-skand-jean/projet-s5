@@ -16,6 +16,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -64,7 +65,6 @@ public class UserInterface extends JFrame {
 
         sm.addUIandDBUtility(this, log);
 
-        mapCapteurs = log.getAllCapteurs();
         ic.add(connecterPort());
         ic.pack();
         // Définit un titre pour notre fenêtre
@@ -85,6 +85,25 @@ public class UserInterface extends JFrame {
 
     public static void main(String[] args) {
         new UserInterface(new SocketManager(), new DBUtility());
+    }
+    
+    private void addFiltreBatiment(ArrayList<JPanel> liste, String batVoulu) {
+    	String nom;
+    	JLabel info;
+    	Iterator<JPanel> it = liste.iterator();
+    	JPanel j = it.next();
+    	if(j.getClass() == PanelEau.class) {
+    		PanelEau i = (PanelEau) j;
+    		if(i.getBat() == batVoulu) {
+    			conteneurCapteurs.add(j);
+    		}
+    		while(it.hasNext()) {
+    			i = (PanelEau) it.next();
+    			if(i.getBat() == batVoulu) {
+        			conteneurCapteurs.add(j);
+        		}
+    		}
+    	}
     }
 
     /**
@@ -113,7 +132,7 @@ public class UserInterface extends JFrame {
         filtrage.add(lblCapteurs);
 
         JLabel nbCapteurs = new JLabel("");
-        nbCapteurs.setText(String.valueOf(mapCapteurs.size()));
+        nbCapteurs.setText(String.valueOf(listeAir.size()+listeEau.size()+listeTemp.size()+listeElec.size()));
         filtrage.add(nbCapteurs, BorderLayout.WEST);
 
         JPanel infoEtFiltrage = new JPanel();
@@ -126,8 +145,11 @@ public class UserInterface extends JFrame {
         cbEau.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 for (int i = 0; i < listeEau.size(); i++) {
-                    conteneurCapteurs.add(listeEau.get(i));
-                    conteneurCapteurs.revalidate();
+                    //conteneurCapteurs.add(listeEau.get(i));
+                    addFiltreBatiment(listeEau, "U1");
+                    addFiltreBatiment(listeEau, "U2");
+                    addFiltreBatiment(listeEau, "U3");
+                	conteneurCapteurs.revalidate();
                     conteneurCapteurs.repaint();
                 }
             } else {
@@ -232,7 +254,7 @@ public class UserInterface extends JFrame {
 
         return fenetreCap;
     }
-
+    
     public void handleDBUpdatedEvent(Capteur c) {
         // New
         if (!mapCapteurs.containsKey(c.getNom())) {
@@ -242,7 +264,7 @@ public class UserInterface extends JFrame {
 
             switch (c.getType()) {
             case EAU:
-                newCapteur = new PanelEau();
+                newCapteur = new PanelEau(c.getBatiment());
                 listeEau.add(newCapteur);
                 break;
             case AIRCOMPRIME:
@@ -582,8 +604,14 @@ public class UserInterface extends JFrame {
     }
 
     private class PanelEau extends JPanel {
-        public PanelEau() {
+    	private String batiment;
+        public PanelEau(String bat) {
             super();
+            this.batiment = bat;
+        }
+        
+        public String getBat() {
+        	return batiment;
         }
     }
 
