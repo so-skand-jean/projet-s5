@@ -60,6 +60,7 @@ public class UserInterface extends JFrame {
 
     // Pannel
     JPanel conteneurCapteurs = new JPanel();
+    JScrollPane fenetreCapteurs = new JScrollPane();
     JFrame ic = new JFrame();
     SocketManager sm;
     DBUtility db;
@@ -131,7 +132,6 @@ public class UserInterface extends JFrame {
     public JPanel fenetreCapteurs() {
         // Fenetre des capteurs
         JPanel fenetreCap = new JPanel();
-        JScrollPane fenetreCapteurs = new JScrollPane();
 
         fenetreCap.setLayout(new GridLayout(1, 2));
         ic.add(fenetreCap);
@@ -148,7 +148,7 @@ public class UserInterface extends JFrame {
         filtrage.add(lblCapteurs);
 
         JLabel nbCapteurs = new JLabel("");
-        nbCapteurs.setText(String.valueOf(listeAir.size() + listeEau.size() + listeTemp.size() + listeElec.size()));
+        nbCapteurs.setText(String.valueOf(mapCapteurs.size()));
         filtrage.add(nbCapteurs, BorderLayout.WEST);
 
         JPanel infoEtFiltrage = new JPanel();
@@ -359,31 +359,16 @@ public class UserInterface extends JFrame {
             DocumentListener listenerDate = new DocumentListener() {
                 @Override
                 public void insertUpdate(DocumentEvent de) {
-                	try {
-						Thread.sleep(5000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
                     event(de);
                 }
 
                 @Override
                 public void removeUpdate(DocumentEvent de) {
-                	try {
-						Thread.sleep(5000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
                     event(de);
                 }
 
                 @Override
                 public void changedUpdate(DocumentEvent de) {
-                	try {
-						Thread.sleep(5000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
                     event(de);
                 }
 
@@ -430,6 +415,11 @@ public class UserInterface extends JFrame {
                     }
 
                     errorDate.setVisible(showornot);
+                    try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
                     //periode.revalidate();
                     //periode.repaint();
                 }
@@ -522,21 +512,21 @@ public class UserInterface extends JFrame {
             deTemps.getDocument().addDocumentListener(listenerTemps);
             aTemps.getDocument().addDocumentListener(listenerTemps);
 
-            periode.add(deBorne, 0, 0);
-            periode.add(deTF, 0, 0);
-            periode.add(deTemps, 0, 0);
-            periode.add(aBorne, 1, 0);
-            periode.add(aTF, 1, 0);
-            periode.add(aTemps, 1, 0);
+            periode.add(deBorne);
+            periode.add(deTF);
+            periode.add(deTemps);
+            periode.add(aBorne);
+            periode.add(aTF);
+            periode.add(aTemps);
 
             //
-            newCapteur.add(nomloc, BorderLayout.WEST);
-            newCapteur.add(ressconn, BorderLayout.WEST);
-            newCapteur.add(val, BorderLayout.WEST);
+            newCapteur.add(nomloc, Component.LEFT_ALIGNMENT);
+            newCapteur.add(ressconn, Component.LEFT_ALIGNMENT);
+            newCapteur.add(val, Component.LEFT_ALIGNMENT);
             //
-            newCapteur.add(periode, BorderLayout.EAST);
-            newCapteur.add(errorDate, BorderLayout.EAST);
-            newCapteur.add(errorTemps, BorderLayout.EAST);
+            newCapteur.add(periode, Component.LEFT_ALIGNMENT);
+            newCapteur.add(errorDate, Component.LEFT_ALIGNMENT);
+            newCapteur.add(errorTemps, Component.LEFT_ALIGNMENT);
 
             // Seuils
 
@@ -553,13 +543,14 @@ public class UserInterface extends JFrame {
             JTextField min = new JTextField(Double.toString(c.getSeuilMin()));
             JTextField max = new JTextField(Double.toString(c.getSeuilMax()));
 
-            JPanel sud = new JPanel();
-            sud.setLayout(new GridLayout(4,2));
-            sud.add(seuilMin);
-            sud.add(min);
-            sud.add(seuilMax);
-            sud.add(max);
-            sud.add(warning);
+            JPanel minPanel = new JPanel();
+            JPanel maxPanel = new JPanel();
+            minPanel.setLayout(new FlowLayout());
+            maxPanel.setLayout(new FlowLayout());
+            minPanel.add(seuilMin);
+            minPanel.add(min);
+            maxPanel.add(seuilMax);
+            maxPanel.add(max);
             warning.setVisible(false);
             DocumentListener listenerMin = new DocumentListener() {
                 @Override
@@ -585,8 +576,6 @@ public class UserInterface extends JFrame {
                     }
                     warning.setText(warning.getText() + " (valeur trop petite)");
                     warning.setVisible(error);
-                    sud.revalidate();
-                    sud.repaint();
                     try {
 						Thread.sleep(5000);
 					} catch (InterruptedException e) {
@@ -618,9 +607,7 @@ public class UserInterface extends JFrame {
                         error = true;
                     }
                     warning.setText(warning.getText() + " (valeur trop grande)");
-                    sud.setVisible(error);
-                    sud.revalidate();
-                    sud.repaint();
+                    warning.setVisible(error);
                 }
 
             };
@@ -628,15 +615,17 @@ public class UserInterface extends JFrame {
             min.getDocument().addDocumentListener(listenerMin);
             max.getDocument().addDocumentListener(listenerMax);
 
-            newCapteur.add(sud);
+            newCapteur.add(minPanel,Component.LEFT_ALIGNMENT);
+            newCapteur.add(maxPanel,Component.LEFT_ALIGNMENT);
+            newCapteur.add(warning,Component.LEFT_ALIGNMENT);
             conteneurCapteurs.add(newCapteur);
-            conteneurCapteurs.revalidate();
-            conteneurCapteurs.repaint();
+            fenetreCapteurs.revalidate();
+            fenetreCapteurs.repaint();
         } else {
             // Update
             mapCapteurs.put(c.getNom(), c);
-            conteneurCapteurs.revalidate();
-            conteneurCapteurs.repaint();
+            fenetreCapteurs.revalidate();
+            fenetreCapteurs.repaint();
         }
 
     }
