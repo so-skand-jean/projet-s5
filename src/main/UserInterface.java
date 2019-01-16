@@ -249,15 +249,15 @@ public class UserInterface extends JFrame {
 
             setLayout(new BoxLayout(newCapteur, BoxLayout.Y_AXIS));
             // Nom - Batiment Etage
-            JLabel nomloc = new JLabel(c.getNom() + " - " + c.getBatiment() + " " + c.getEtage());
+            JLabel nomloc = new JLabel(c.getNom() + " - " + c.getBatiment() + " Et." + c.getEtage());
             Font font1 = new Font("Arial", Font.ITALIC, 15);
             nomloc.setFont(font1);
             // Type - Connecte/Deconnecte
-            JLabel ressconn = new JLabel(c.getType() + " - " + (c.getEstConnecte() ? "Connecte" : "Deconnecte"));
+            JLabel ressconn = new JLabel(c.getType() + " - " + (c.isConnected() ? "Connecte" : "Deconnecte"));
             Font font2 = new Font("Arial", Font.BOLD, 13);
             ressconn.setFont(font2);
             // [VALEUR]
-            JLabel val = new JLabel(String.valueOf(c.getValeur()));
+            JLabel val = new JLabel(String.valueOf(c.getValeurCourante()));
             Font fontVal = new Font("Arial", Font.BOLD, 15);
             val.setFont(fontVal);
             val.setBackground(Color.WHITE);
@@ -400,7 +400,7 @@ public class UserInterface extends JFrame {
                             Date date = e.getKey();
                             Capteur capteur = e.getValue();
                             if (date.after(date1) && date.before(date2)) {
-                                dataChart.addValue(capteur.getValeur(), "R" + elem, "Valeur");
+                                dataChart.addValue(capteur.getValeurCourante(), "R" + elem, "Valeur");
                                 dataChart.addValue(date.getTime() / 1000, "R" + elem, "Date");
                             }
                             elem++;
@@ -485,7 +485,7 @@ public class UserInterface extends JFrame {
                 private void event(DocumentEvent de) {
                     boolean error = false;
 
-                    if (Double.parseDouble(de.toString()) > c.getValeur()) {
+                    if (Double.parseDouble(de.toString()) > c.getValeurCourante()) {
                         error = true;
                     }
                     warning.setText(warning.getText() + " (valeur trop petite)");
@@ -514,7 +514,7 @@ public class UserInterface extends JFrame {
                 private void event(DocumentEvent de) {
                     boolean error = false;
 
-                    if (Double.parseDouble(de.toString()) < c.getValeur()) {
+                    if (Double.parseDouble(de.toString()) < c.getValeurCourante()) {
                         error = true;
                     }
                     warning.setText(warning.getText() + " (valeur trop grande)");
