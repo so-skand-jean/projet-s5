@@ -40,7 +40,7 @@ public class DBUtility {
         Capteur tmp;
         try {
             ResultSet r = con.createStatement().executeQuery(
-                    "SELECT (cpt_nom, cpt_surnom, cpt_type, cpt_batiment, cpt_etage, cpt_info_lieu, cpt_seuil_min, cpt_seuil_max, cpt_date_depassement) FROM capteur");
+                    "SELECT cpt_nom, cpt_surnom, cpt_type, cpt_batiment, cpt_etage, cpt_info_lieu, cpt_seuil_min, cpt_seuil_max, cpt_date_depassement FROM capteur");
             while (r.next()) {
                 tmp = new Capteur();
                 tmp.hydrate(r.getString("cpt_nom"), r.getString("cpt_surnom"),
